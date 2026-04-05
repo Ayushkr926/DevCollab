@@ -1,11 +1,18 @@
+
+
+
+import 'package:devcollab/Screens/Explore%20screen.dart';
+import 'package:devcollab/providers/home_provider.dart';
+import 'package:devcollab/repositories/home_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:provider/provider.dart';
+import 'Screens/Homescreen.dart';
 import 'Screens/Register_Step2.dart';
 import 'Screens/Registerscreen.dart';
 import 'Screens/SplashScreen.dart';
-import 'Screens/login_screen.dart';
 import 'Screens/registerstep3.dart';
+import 'screens/login_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,21 +31,29 @@ class DevCollabApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'DevCollab',
-      debugShowCheckedModeBanner: false,
-      theme: _buildTheme(),
-      initialRoute: '/',
-      routes: {
-        '/': (_) => const SplashScreen(),
-        // Add these as you build them:
-        '/login':     (_) => const LoginScreen(),
-        '/register':  (_) => const RegisterScreen(),
-        '/register2': (_) => const RegisterScreen2(),
-        '/register3': (_) => const RegisterScreen3(),
-        // '/verify':    (_) => const EmailVerifyScreen(),
-        // '/home':      (_) => const HomeScreen(),
-      },
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => HomeProvider(repository: HomeRepository()),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'DevCollab',
+        debugShowCheckedModeBanner: false,
+        theme: _buildTheme(),
+        initialRoute: '/',
+        routes: {
+          '/': (_) => const SplashScreen(),
+          // Add these as you build them:
+          '/login':     (_) => const LoginScreen(),
+          '/register':  (_) => const RegisterScreen(),
+          '/register2': (_) => const RegisterScreen2(),
+          '/register3': (_) => const RegisterScreen3(),
+          // '/verify':    (_) => const EmailVerifyScreen(),
+          '/explore': (_) => const Explorescreen(),
+          '/home':      (_) => const HomeScreen(),
+        },
+      ),
     );
   }
 
