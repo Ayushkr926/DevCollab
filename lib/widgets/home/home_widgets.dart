@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../Screens/storyviewscreen.dart';
 import '../../models/hackathon.dart';
 import '../../utils/app_theme.dart';
+import '../../utils/AppColors.dart';
 import 'common_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,34 +35,35 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(6, 0, 6, 12),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: DC.bg1,
+          color: c.surfaceAlt,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: _ctrl.text.isNotEmpty ? DC.p : DC.border,
+            color: _ctrl.text.isNotEmpty ? c.primary : c.border,
             width: _ctrl.text.isNotEmpty ? 1.0 : 0.5,
           ),
         ),
         child: Row(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(left: 13, right: 8),
-              child: Icon(Icons.search_rounded, size: 18, color: DC.gr),
+            Padding(
+              padding: const EdgeInsets.only(left: 13, right: 8),
+              child: Icon(Icons.search_rounded, size: 18, color: c.textMuted),
             ),
             Expanded(
               child: TextField(
                 controller: _ctrl,
-                style: DCText.body.copyWith(fontSize: 13),
-                decoration: const InputDecoration(
+                style: TextStyle(fontSize: 13, color: c.textPrimary),
+                decoration: InputDecoration(
                   hintText: 'Search devs, skills, projects…',
-                  hintStyle: TextStyle(fontSize: 13, color: DC.textTertiary, fontWeight: FontWeight.w400),
+                  hintStyle: TextStyle(fontSize: 13, color: c.textMuted, fontWeight: FontWeight.w400),
                   border: InputBorder.none,
                   isDense: true,
-                  contentPadding: EdgeInsets.symmetric(vertical: 11),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 11),
                 ),
                 onChanged: (v) {
                   setState(() {});
@@ -74,9 +77,9 @@ class _HomeSearchBarState extends State<HomeSearchBar> {
                   _ctrl.clear();
                   widget.onClear();
                 },
-                child: const Padding(
-                  padding: EdgeInsets.only(right: 12, left: 4),
-                  child: Icon(Icons.close_rounded, size: 17, color: DC.gr),
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 12, left: 4),
+                  child: Icon(Icons.close_rounded, size: 17, color: c.textMuted),
                 ),
               )
             else
@@ -163,6 +166,7 @@ class _FilterChipState extends State<_FilterChip> with SingleTickerProviderState
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) { _ctrl.reverse(); widget.onTap(); },
@@ -174,10 +178,10 @@ class _FilterChipState extends State<_FilterChip> with SingleTickerProviderState
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: widget.isActive ? DC.p : DC.bg0,
+            color: widget.isActive ? c.primary : c.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: widget.isActive ? DC.p : DC.border,
+              color: widget.isActive ? c.primary : c.border,
               width: widget.isActive ? 0 : 0.5,
             ),
           ),
@@ -186,7 +190,7 @@ class _FilterChipState extends State<_FilterChip> with SingleTickerProviderState
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: widget.isActive ? Colors.white : DC.textSecondary,
+              color: widget.isActive ? Colors.white : c.textSecondary,
             ),
           ),
         ),
@@ -210,17 +214,31 @@ class DeveloperStoriesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("stories lengts is :${stories.length}");
     return SizedBox(
       height: 80,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: stories.length + 1, // +1 for "Add yours" button
+        itemCount: stories.length + 1,
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (_, i) {
           if (i == 0) return _AddStoryButton(onTap: onAddStory);
           final story = stories[i - 1];
-          return _StoryItem(story: story);
+          return _StoryItem(
+            story: story,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => StoryViewerScreen(
+                    stories: stories,
+                    initialIndex: i - 1,
+                  ),
+                ),
+              );
+            },
+          );
         },
       ),
     );
@@ -229,7 +247,8 @@ class DeveloperStoriesRow extends StatelessWidget {
 
 class _StoryItem extends StatefulWidget {
   final DeveloperStory story;
-  const _StoryItem({required this.story});
+  final VoidCallback onTap;
+  const _StoryItem({required this.story,required this.onTap,});
 
   @override
   State<_StoryItem> createState() => _StoryItemState();
@@ -252,11 +271,16 @@ class _StoryItemState extends State<_StoryItem> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     final story = widget.story;
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
-      onTapUp: (_) => _ctrl.reverse(),
+      onTapUp: (_) {
+        _ctrl.reverse();
+        widget.onTap();
+      },
       onTapCancel: () => _ctrl.reverse(),
+
       child: AnimatedBuilder(
         animation: _scale,
         builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
@@ -272,29 +296,34 @@ class _StoryItemState extends State<_StoryItem> with SingleTickerProviderStateMi
                   padding: const EdgeInsets.all(2.5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: story.hasUnseenStory
-                        ? const LinearGradient(
-                      colors: [DC.p, DC.pk],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                        : null,
-                    border: !story.hasUnseenStory
-                        ? Border.all(color: DC.border, width: 1)
-                        : null,
+                    border: Border.all(
+                      color: Color(
+                        int.parse(
+                          (story.hasSeen
+                              ? story.seenBorderColor
+                              : story.unseenBorderColor)
+                              .replaceFirst('#', '0xff'),
+                        ),
+                      ),
+                      width: 2.5,
+                    ),
                   ),
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
+                    decoration: BoxDecoration(
+                      color: c.surface,
                       shape: BoxShape.circle,
                     ),
                     padding: const EdgeInsets.all(2),
-                    child: DcAvatar(
-                      initials: story.initials,
-                      colorIndex: story.colorIndex,
-                      size: 38,
-                      fontSize: 12,
-                      isOnline: story.isOnline,
+                    child: ClipOval(
+                      child: story.profileImage.isNotEmpty
+                          ? Image.network(
+                        story.profileImage,
+                        width: 48,
+                        height: 48,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => _InitialAvatar(story.initials),
+                      )
+                          : _InitialAvatar(story.initials),
                     ),
                   ),
                 ),
@@ -305,9 +334,10 @@ class _StoryItemState extends State<_StoryItem> with SingleTickerProviderStateMi
               width: 52,
               child: Text(
                 story.name.split(' ').first,
-                style: DCText.micro.copyWith(
-                  color: DC.textPrimary,
+                style: TextStyle(
+                  fontSize: 9,
                   fontWeight: FontWeight.w600,
+                  color: c.textPrimary,
                 ),
                 textAlign: TextAlign.center,
                 overflow: TextOverflow.ellipsis,
@@ -326,6 +356,7 @@ class _AddStoryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -334,15 +365,17 @@ class _AddStoryButton extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: DC.p3,
+              color: c.primaryLight,
               shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFAFA9EC), width: 0.5),
+              border: Border.all(color: c.primary.withValues(alpha: 0.3), width: 0.5),
             ),
-            child: const Icon(Icons.add_rounded, color: DC.p, size: 22),
+            child: Icon(Icons.add_rounded, color: c.primary, size: 22),
           ),
           const SizedBox(height: 5),
-          const Text('Add yours', style: TextStyle(
-              fontSize: 9, fontWeight: FontWeight.w700, color: DC.p)),
+          Text(
+            'Add yours',
+            style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: c.primary),
+          ),
         ],
       ),
     );
@@ -350,7 +383,7 @@ class _AddStoryButton extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HackathonCard — with live countdown timer
+// HackathonCard — with live countdown timer (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class HackathonCard extends StatelessWidget {
   final Hackathon hack;
@@ -366,9 +399,14 @@ class HackathonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      decoration: DCDecoration.card(),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: c.border, width: 0.5),
+      ),
       child: Stack(
         children: [
           // Left accent strip
@@ -376,9 +414,9 @@ class HackathonCard extends StatelessWidget {
             left: 0, top: 0, bottom: 0,
             child: Container(
               width: 3.5,
-              decoration: const BoxDecoration(
-                color: DC.p,
-                borderRadius: BorderRadius.only(
+              decoration: BoxDecoration(
+                gradient: c.primaryGradient,
+                borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(16),
                   bottomLeft: Radius.circular(16),
                 ),
@@ -398,9 +436,9 @@ class HackathonCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(hack.title, style: DCText.h3),
+                          Text(hack.title, style: DCText.h3.copyWith(color: c.textPrimary)),
                           const SizedBox(height: 3),
-                          Text(hack.subtitle, style: DCText.caption),
+                          Text(hack.subtitle, style: DCText.caption.copyWith(color: c.textSecondary)),
                         ],
                       ),
                     ),
@@ -419,22 +457,23 @@ class HackathonCard extends StatelessWidget {
                 if (hack.isOpen) ...[
                   Text(
                     'Registration closes in',
-                    style: DCText.micro.copyWith(
-                      textBaseline: TextBaseline.alphabetic,
+                    style: TextStyle(
+                      fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.4,
+                      color: c.textMuted,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      _CountdownBlock(value: hack.daysLeft,    label: 'days'),
+                      _CountdownBlock(value: hack.daysLeft,    label: 'days', colors: c),
                       const SizedBox(width: 5),
-                      _CountdownBlock(value: hack.hoursLeft,   label: 'hrs'),
+                      _CountdownBlock(value: hack.hoursLeft,   label: 'hrs',  colors: c),
                       const SizedBox(width: 5),
-                      _CountdownBlock(value: hack.minutesLeft, label: 'min'),
+                      _CountdownBlock(value: hack.minutesLeft, label: 'min',  colors: c),
                       const SizedBox(width: 5),
-                      _CountdownBlock(value: hack.secondsLeft, label: 'sec'),
+                      _CountdownBlock(value: hack.secondsLeft, label: 'sec',  colors: c),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -445,19 +484,11 @@ class HackathonCard extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 2,
-                      child: _HackBtn(
-                        label: 'Form team',
-                        isPrimary: true,
-                        onTap: onFormTeam,
-                      ),
+                      child: _HackBtn(label: 'Form team', isPrimary: true,  onTap: onFormTeam, colors: c),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: _HackBtn(
-                        label: 'Details',
-                        isPrimary: false,
-                        onTap: onDetails,
-                      ),
+                      child: _HackBtn(label: 'Details', isPrimary: false, onTap: onDetails, colors: c),
                     ),
                   ],
                 ),
@@ -479,28 +510,29 @@ class HackathonCard extends StatelessWidget {
 class _CountdownBlock extends StatelessWidget {
   final int value;
   final String label;
-  const _CountdownBlock({required this.value, required this.label});
+  final AppColorScheme colors;
+  const _CountdownBlock({required this.value, required this.label, required this.colors});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      decoration: BoxDecoration(color: DC.p3, borderRadius: BorderRadius.circular(9)),
+      decoration: BoxDecoration(color: colors.primaryLight, borderRadius: BorderRadius.circular(9)),
       child: Column(
         children: [
           Text(
             value.toString().padLeft(2, '0'),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,
-              color: DC.p,
+              color: colors.primary,
               letterSpacing: -0.5,
               height: 1.1,
             ),
           ),
           Text(
             label,
-            style: DCText.micro.copyWith(color: DC.p),
+            style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: colors.primary),
           ),
         ],
       ),
@@ -508,15 +540,12 @@ class _CountdownBlock extends StatelessWidget {
   }
 }
 
-extension _TextOpacity on TextStyle {
-  TextStyle opacity(double v) => copyWith(color: color?.withOpacity(v));
-}
-
 class _HackBtn extends StatefulWidget {
   final String label;
   final bool isPrimary;
   final VoidCallback onTap;
-  const _HackBtn({required this.label, required this.isPrimary, required this.onTap});
+  final AppColorScheme colors;
+  const _HackBtn({required this.label, required this.isPrimary, required this.onTap, required this.colors});
 
   @override
   State<_HackBtn> createState() => _HackBtnState();
@@ -539,6 +568,7 @@ class _HackBtnState extends State<_HackBtn> with SingleTickerProviderStateMixin 
 
   @override
   Widget build(BuildContext context) {
+    final c = widget.colors;
     return GestureDetector(
       onTapDown: (_) => _ctrl.forward(),
       onTapUp: (_) { _ctrl.reverse(); widget.onTap(); },
@@ -549,11 +579,11 @@ class _HackBtnState extends State<_HackBtn> with SingleTickerProviderStateMixin 
         child: Container(
           height: 38,
           decoration: BoxDecoration(
-            color: widget.isPrimary ? DC.p : Colors.transparent,
+            color: widget.isPrimary ? c.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             border: widget.isPrimary
                 ? null
-                : Border.all(color: DC.p, width: 0.5),
+                : Border.all(color: c.primary, width: 0.5),
           ),
           child: Center(
             child: Text(
@@ -561,7 +591,7 @@ class _HackBtnState extends State<_HackBtn> with SingleTickerProviderStateMixin 
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: widget.isPrimary ? Colors.white : DC.p,
+                color: widget.isPrimary ? Colors.white : c.primary,
               ),
             ),
           ),
@@ -572,7 +602,7 @@ class _HackBtnState extends State<_HackBtn> with SingleTickerProviderStateMixin 
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// HomeHeader — greeting + notification bell + avatar
+// HomeHeader — greeting + notification bell + avatar (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class HomeHeader extends StatelessWidget {
   final String firstName;
@@ -601,6 +631,7 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
       child: Row(
@@ -609,11 +640,18 @@ class HomeHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_greeting(), style: DCText.caption.copyWith(fontWeight: FontWeight.w500)),
+                Text(
+                  _greeting(),
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    color: c.textMuted,
+                  ),
+                ),
                 const SizedBox(height: 2),
                 RichText(
                   text: TextSpan(
-                    style: DCText.h2,
+                    style: DCText.h2.copyWith(color: c.textPrimary),
                     children: [
                       TextSpan(text: firstName),
                       const TextSpan(text: ' 👋', style: TextStyle(fontSize: 20)),
@@ -633,11 +671,11 @@ class HomeHeader extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: DC.bg1,
+                    color: c.surfaceAlt,
                     shape: BoxShape.circle,
-                    border: Border.all(color: DC.border, width: 0.5),
+                    border: Border.all(color: c.border, width: 0.5),
                   ),
-                  child: const Icon(Icons.notifications_none_rounded, size: 19, color: DC.textSecondary),
+                  child: Icon(Icons.notifications_none_rounded, size: 19, color: c.textSecondary),
                 ),
                 if (unreadNotifications > 0)
                   Positioned(
@@ -647,9 +685,9 @@ class HomeHeader extends StatelessWidget {
                       width: 16,
                       height: 16,
                       decoration: BoxDecoration(
-                        color: DC.r,
+                        color: c.error,
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 1.5),
+                        border: Border.all(color: c.surface, width: 1.5),
                       ),
                       child: Center(
                         child: Text(
@@ -693,6 +731,7 @@ class HomeErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -703,22 +742,22 @@ class HomeErrorView extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: DC.r2,
+                color: c.errorSurface,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.wifi_off_rounded, color: DC.r, size: 30),
+              child: Icon(Icons.wifi_off_rounded, color: c.error, size: 30),
             ),
             const SizedBox(height: 16),
-            Text('Something went wrong', style: DCText.h3),
+            Text('Something went wrong', style: DCText.h3.copyWith(color: c.textPrimary)),
             const SizedBox(height: 8),
-            Text(message, style: DCText.caption, textAlign: TextAlign.center),
+            Text(message, style: DCText.caption.copyWith(color: c.textSecondary), textAlign: TextAlign.center),
             const SizedBox(height: 24),
             GestureDetector(
               onTap: onRetry,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
                 decoration: BoxDecoration(
-                  color: DC.p,
+                  gradient: c.primaryGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
@@ -732,6 +771,36 @@ class HomeErrorView extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class _InitialAvatar extends StatelessWidget {
+  final String initials;
+
+  const _InitialAvatar(this.initials);
+
+  @override
+  Widget build(BuildContext context) {
+    final c = AppColors.of(context);
+
+    return Container(
+      width: 48,
+      height: 48,
+      decoration: BoxDecoration(
+        color: c.primaryLight,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+          color: c.primary,
         ),
       ),
     );

@@ -1,11 +1,15 @@
 // lib/screens/home_screen.dart
 
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import '../models/Hackathinmodel.dart';
 import '../providers/home_provider.dart';
 import '../models/showcase_post.dart';
 import '../utils/app_theme.dart';
+import '../widgets/hackathoncardstack.dart';
 import '../widgets/home/common_widgets.dart';
 import '../widgets/home/home_widgets.dart';
 import '../widgets/home/showcase_grid.dart';
@@ -21,6 +25,267 @@ class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
   // ── Bottom nav ─────────────────────────────────────────────────────────────
   int _navIndex = 0;
+
+
+  //hackathon list
+  final List<Hackathon> sampleHackathons = [
+    Hackathon(
+      id: "1",
+      title: "BuildSpace X",
+      tagline: "Code the future of Web3",
+      description:
+      "Join developers worldwide to build the next generation of decentralized applications using blockchain technology.",
+      organizer: "BuildSpace",
+      organizerLogo: "https://picsum.photos/100?1",
+      organizerWebsite: "https://buildspace.so",
+      bannerImage: "https://picsum.photos/id/1015/800/400",
+      galleryImages: [],
+      promoVideo: "",
+      themes: ["Web3", "DeFi", "NFT", "DAOs"],
+      technologies: ["Solidity", "Flutter", "Node.js", "Ethereum"],
+      isOnline: false,
+      venue: "BuildSpace HQ",
+      city: "San Francisco",
+      state: "California",
+      country: "USA",
+      googleMapLink: "",
+      registrationStart: DateTime.now().subtract(const Duration(days: 5)),
+      registrationEnd: DateTime.now().add(const Duration(days: 2)),
+      hackathonStart: DateTime.now().add(const Duration(days: 3, hours: 8)),
+      hackathonEnd: DateTime.now().add(const Duration(days: 5, hours: 8)),
+      resultDate: DateTime.now().add(const Duration(days: 7)),
+      registrationOpen: true,
+      requiresApproval: false,
+      registrationFee: 0,
+      maxParticipants: 500,
+      minTeamSize: 1,
+      maxTeamSize: 4,
+      totalPrizePool: "\$50,000",
+      accentColor: const Color(0xFF6C63FF),
+      prizes: [
+        Prize(position: "1st", amount: "\$25,000", description: "Grand Prize"),
+        Prize(position: "2nd", amount: "\$15,000", description: "Runner Up"),
+        Prize(position: "3rd", amount: "\$10,000", description: "Second Runner Up"),
+      ],
+      judges: [],
+      mentors: [],
+      sponsors: [],
+      faqs: [],
+      schedule: [],
+      resources: [],
+      discordLink: "",
+      whatsappLink: "",
+      linkedinLink: "",
+      instagramLink: "",
+      email: "hello@buildspace.so",
+      phone: "",
+      registeredTeams: 18,
+      registeredParticipants: 47,
+      views: 1200,
+      rating: 4.8,
+      eligibility: "Open to all developers",
+      rules: ["Maximum 4 members", "Original work only"],
+      participationCertificate: true,
+      winnerCertificate: true,
+      featured: true,
+      bookmarked: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(), tracks: [],
+    ),
+
+    Hackathon(
+      id: "2",
+      title: "HackAI 2025",
+      tagline: "Build with Large Language Models",
+      description:
+      "An online AI hackathon focused on LLMs, AI Agents, and Computer Vision.",
+      organizer: "OpenAI Community",
+      organizerLogo: "https://picsum.photos/100?2",
+      organizerWebsite: "https://hackai.dev",
+      bannerImage: "https://picsum.photos/id/1025/800/400",
+      galleryImages: [],
+      promoVideo: "",
+      themes: ["LLMs", "Computer Vision", "MLOps", "Agents"],
+      technologies: ["Python", "PyTorch", "Flutter", "FastAPI"],
+      isOnline: true,
+      venue: "Online",
+      city: "Global",
+      state: "",
+      country: "Worldwide",
+      googleMapLink: "",
+      registrationStart: DateTime.now().subtract(const Duration(days: 3)),
+      registrationEnd: DateTime.now().add(const Duration(days: 6)),
+      hackathonStart: DateTime.now().add(const Duration(days: 7, hours: 2)),
+      hackathonEnd: DateTime.now().add(const Duration(days: 9, hours: 2)),
+      resultDate: DateTime.now().add(const Duration(days: 11)),
+      registrationOpen: true,
+      requiresApproval: false,
+      registrationFee: 0,
+      maxParticipants: 2000,
+      minTeamSize: 1,
+      maxTeamSize: 5,
+      totalPrizePool: "\$100,000",
+      accentColor: const Color(0xFF00C896),
+      prizes: [
+        Prize(position: "1st", amount: "\$50,000", description: "Champion"),
+        Prize(position: "2nd", amount: "\$30,000", description: "Runner Up"),
+        Prize(position: "3rd", amount: "\$20,000", description: "Third Place"),
+      ],
+      judges: [],
+      mentors: [],
+      sponsors: [],
+      faqs: [],
+      schedule: [],
+      resources: [],
+      discordLink: "",
+      whatsappLink: "",
+      linkedinLink: "",
+      instagramLink: "",
+      email: "contact@hackai.dev",
+      phone: "",
+      registeredTeams: 420,
+      registeredParticipants: 1188,
+      views: 8900,
+      rating: 4.9,
+      eligibility: "Open Worldwide",
+      rules: ["AI-generated code allowed", "Original project only"],
+      participationCertificate: true,
+      winnerCertificate: true,
+      featured: true,
+      bookmarked: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(), tracks: [],
+    ),
+
+    Hackathon(
+      id: "3",
+      title: "ClimateTech Hack",
+      tagline: "Tech solutions for a sustainable planet",
+      description:
+      "Innovate solutions addressing climate change, agriculture, and clean energy.",
+      organizer: "Climate Foundation",
+      organizerLogo: "https://picsum.photos/100?3",
+      organizerWebsite: "https://climatetechhack.org",
+      bannerImage: "https://picsum.photos/id/1040/800/400",
+      galleryImages: [],
+      promoVideo: "",
+      themes: ["CleanEnergy", "AgriTech", "Mobility", "Climate"],
+      technologies: ["Flutter", "IoT", "Python"],
+      isOnline: false,
+      venue: "Berlin Innovation Hub",
+      city: "Berlin",
+      state: "",
+      country: "Germany",
+      googleMapLink: "",
+      registrationStart: DateTime.now().subtract(const Duration(days: 2)),
+      registrationEnd: DateTime.now().add(const Duration(days: 12)),
+      hackathonStart: DateTime.now().add(const Duration(days: 14)),
+      hackathonEnd: DateTime.now().add(const Duration(days: 16)),
+      resultDate: DateTime.now().add(const Duration(days: 18)),
+      registrationOpen: true,
+      requiresApproval: true,
+      registrationFee: 20,
+      maxParticipants: 300,
+      minTeamSize: 2,
+      maxTeamSize: 4,
+      totalPrizePool: "€30,000",
+      accentColor: const Color(0xFFFF8A00),
+      prizes: [
+        Prize(position: "1st", amount: "€15,000", description: "Champion"),
+        Prize(position: "2nd", amount: "€10,000", description: "Runner Up"),
+        Prize(position: "3rd", amount: "€5,000", description: "Third Place"),
+      ],
+      judges: [],
+      mentors: [],
+      sponsors: [],
+      faqs: [],
+      schedule: [],
+      resources: [],
+      discordLink: "",
+      whatsappLink: "",
+      linkedinLink: "",
+      instagramLink: "",
+      email: "info@climatetechhack.org",
+      phone: "",
+      registeredTeams: 42,
+      registeredParticipants: 166,
+      views: 5400,
+      rating: 4.7,
+      eligibility: "Students & Professionals",
+      rules: ["2-4 members", "Prototype required"],
+      participationCertificate: true,
+      winnerCertificate: true,
+      featured: false,
+      bookmarked: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(), tracks: [],
+    ),
+
+    Hackathon(
+      id: "4",
+      title: "HealthByte",
+      tagline: "Reinvent healthcare with code",
+      description:
+      "Build innovative healthcare applications powered by AI, cloud, and data science.",
+      organizer: "HealthByte Foundation",
+      organizerLogo: "https://picsum.photos/100?4",
+      organizerWebsite: "https://healthbyte.org",
+      bannerImage: "https://picsum.photos/id/1039/800/400",
+      galleryImages: [],
+      promoVideo: "",
+      themes: ["MedTech", "BioInfo", "HealthAI", "Wellness"],
+      technologies: ["Flutter", "Firebase", "TensorFlow"],
+      isOnline: false,
+      venue: "Boston Convention Center",
+      city: "Boston",
+      state: "Massachusetts",
+      country: "USA",
+      googleMapLink: "",
+      registrationStart: DateTime.now().subtract(const Duration(days: 5)),
+      registrationEnd: DateTime.now().add(const Duration(days: 18)),
+      hackathonStart: DateTime.now().add(const Duration(days: 21, hours: 6)),
+      hackathonEnd: DateTime.now().add(const Duration(days: 22, hours: 18)),
+      resultDate: DateTime.now().add(const Duration(days: 24)),
+      registrationOpen: true,
+      requiresApproval: false,
+      registrationFee: 15,
+      maxParticipants: 400,
+      minTeamSize: 2,
+      maxTeamSize: 5,
+      totalPrizePool: "\$75,000",
+      accentColor: const Color(0xFF6C63FF),
+
+      prizes: [
+        Prize(position: "1st", amount: "\$40,000", description: "Champion"),
+        Prize(position: "2nd", amount: "\$20,000", description: "Runner Up"),
+        Prize(position: "3rd", amount: "\$15,000", description: "Third Place"),
+      ],
+      judges: [],
+      mentors: [],
+      sponsors: [],
+      faqs: [],
+      schedule: [],
+      resources: [],
+      discordLink: "",
+      whatsappLink: "",
+      linkedinLink: "",
+      instagramLink: "",
+      email: "support@healthbyte.org",
+      phone: "",
+      registeredTeams: 75,
+      registeredParticipants: 180,
+      views: 6700,
+      rating: 4.6,
+      eligibility: "Students & Professionals",
+      rules: ["Maximum 5 members", "Working demo required"],
+      participationCertificate: true,
+      winnerCertificate: true,
+      featured: false,
+      bookmarked: false,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(), tracks: [],
+    ),
+  ];
 
   // ── Entry animation ───────────────────────────────────────────────────────
   late final AnimationController _entryCtrl;
@@ -80,7 +345,7 @@ class _HomeScreenState extends State<HomeScreen>
       case 1: Navigator.of(context).pushNamed('/explore'); break;
       case 2: _showPostSheet(); break;
       case 3: Navigator.of(context).pushNamed('/chat'); break;
-      case 4: Navigator.of(context).pushNamed('/profile'); break;
+      case 4: Navigator.of(context).pushNamed('/Profile'); break;
     }
   }
 
@@ -144,62 +409,54 @@ class _HomeScreenState extends State<HomeScreen>
                                 unreadNotifications:
                                 provider.user!.unreadNotifications,
                                 onNotificationsTap: () =>
-                                    Navigator.of(context).pushNamed('/notifications'),
+                                    Navigator.of(context).pushNamed('/request'),
                                 onAvatarTap: () =>
-                                    Navigator.of(context).pushNamed('/profile'),
+                                    Navigator.of(context).pushNamed('/Profile'),
                               ),
 
                             // White card surface for search + filters
-                            Container(
-                              color: DC.bg0,
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: 4),
-                                  HomeSearchBar(
-                                    query: provider.searchQuery,
-                                    onChanged: provider.onSearchChanged,
-                                    onClear: provider.clearSearch,
-                                  ),
-                                  FilterChipsRow(
-                                    active: provider.activeFilter,
-                                    onSelect: provider.setFilter,
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
-                            ),
+                            // Container(
+                            //   color: DC.bg0,
+                            //   child: Column(
+                            //     children: [
+                            //       const SizedBox(height: 4),
+                            //       HomeSearchBar(
+                            //         query: provider.searchQuery,
+                            //         onChanged: provider.onSearchChanged,
+                            //         onClear: provider.clearSearch,
+                            //       ),
+                            //
+                            // ),
                           ],
                         ),
                       ),
 
                       // ── Developer stories ─────────────────────────────────
-                      if (!provider.isSearching && provider.stories.isNotEmpty)
-                        SliverToBoxAdapter(
-                          child: Container(
-                            color: DC.bg0,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 12),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 16),
-                                  child: Text('Active developers',
-                                      style: DCText.label.copyWith(
-                                          color: DC.textSecondary)),
-                                ),
-                                const SizedBox(height: 8),
-                                DeveloperStoriesRow(
-                                  stories: provider.stories,
-                                  onAddStory: () =>
-                                      Navigator.of(context).pushNamed('/add-work'),
-                                ),
-                                const SizedBox(height: 12),
-                                const Divider(height: 0.5, thickness: 0.5, color: DC.borderLight),
-                              ],
-                            ),
+                      SliverToBoxAdapter(
+                        child: Container(
+                          color: DC.bg1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 12),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16),
+                                child: Text('Active developers',
+                                    style: DCText.label.copyWith(
+                                        color: DC.textSecondary)),
+                              ),
+                              const SizedBox(height: 8),
+                              DeveloperStoriesRow(
+                                stories: provider.stories,
+                                onAddStory: () =>
+                                    Navigator.of(context).pushNamed('/add-work'),
+                              ),
+                              const SizedBox(height: 12),
+                              const Divider(height: 0.5, thickness: 0.5, color: DC.borderLight),
+                            ],
                           ),
                         ),
-
+                      ),
                       // ── Hackathons section ────────────────────────────────
                       if (!provider.isSearching && provider.hackathons.isNotEmpty)
                         SliverToBoxAdapter(
@@ -229,6 +486,37 @@ class _HomeScreenState extends State<HomeScreen>
                           ),
                         ),
 
+
+                      SliverToBoxAdapter(
+                        child: Container(
+                          color: DC.bg1,
+                          child: SectionHeader(
+                            title: "Your Hackathons",
+                            showDot: !provider.isSearching,
+                            onSeeAll: provider.isSearching
+                                ? null
+                                : () =>
+                                Navigator.of(context).pushNamed('/showcase'),
+                          ),
+                        ),
+                      ),
+
+                      // ── Hackathon Card Stack ──────────────────────────────────────────────
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 1),
+                          child: HackathonCardStack(
+                            hackathons: sampleHackathons,
+                            cardWidth: MediaQuery.of(context).size.width - 10,
+
+                            onRegister: (h) {
+                              Navigator.of(context).pushNamed('/hackathon/${h.id}');
+                            },
+                          ),
+                        ),
+                      ),
+
+
                       // ── Showcase header ───────────────────────────────────
                       SliverToBoxAdapter(
                         child: Container(
@@ -246,10 +534,23 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
 
+
+
                       // ── Showcase grid — loading ───────────────────────────
                       if (provider.postsStatus == PostsStatus.loading)
                         const SliverToBoxAdapter(child: ShowcaseGridSkeleton()),
 
+                      SliverToBoxAdapter(
+                        child:  FilterChipsRow(
+                          active: provider.activeFilter,
+                          onSelect: provider.setFilter,
+                        ),
+                      ),
+
+                      SliverToBoxAdapter(
+                        child:
+                        const SizedBox(height: 10,),
+                      ),
                       // ── Showcase grid — loaded ────────────────────────────
                       if (provider.postsStatus != PostsStatus.loading)
                         SliverToBoxAdapter(
@@ -294,31 +595,90 @@ class _HomeScreenState extends State<HomeScreen>
 // ─────────────────────────────────────────────────────────────────────────────
 // Bottom navigation bar
 // ─────────────────────────────────────────────────────────────────────────────
+
+
 class BottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
 
-  const BottomNav({required this.currentIndex, required this.onTap});
+  const BottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
+
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: DC.borderLight, width: 0.5)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 60,
-          child: Row(
-            children: [
-              _NavItem(icon: Icons.home_rounded,                 label: 'Home',     index: 0, current: currentIndex, onTap: onTap),
-              _NavItem(icon: Icons.search_rounded,               label: 'Explore',  index: 1, current: currentIndex, onTap: onTap),
-              _NavPlusButton(onTap: () => onTap(2)),
-              _NavItem(icon: Icons.chat_bubble_outline_rounded,  label: 'Chat',     index: 3, current: currentIndex, onTap: onTap, badgeCount: 3),
-              _NavItem(icon: Icons.person_outline_rounded,       label: 'Profile',  index: 4, current: currentIndex, onTap: onTap),
-            ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 22),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(
+          sigmaX: 100,
+          sigmaY: 100,
+        ),
+          child: Container(
+            height: 68,
+            decoration: BoxDecoration(
+              // Glass background
+              color: Colors.transparent,
+
+              borderRadius: BorderRadius.circular(28),
+
+              border: Border.all(
+                color: Colors.white.withOpacity(0.25),
+                width: 1,
+              ),
+
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: [
+                  _NavItem(
+                    icon: Icons.home_rounded,
+                    label: 'Home',
+                    index: 0,
+                    current: currentIndex,
+                    onTap: onTap,
+                  ),
+                  _NavItem(
+                    icon: Icons.search_rounded,
+                    label: 'Explore',
+                    index: 1,
+                    current: currentIndex,
+                    onTap: onTap,
+                  ),
+                  _NavPlusButton(
+                    onTap: () => onTap(2),
+                  ),
+                  _NavItem(
+                    icon: Icons.chat_bubble_outline_rounded,
+                    label: 'Chat',
+                    index: 3,
+                    current: currentIndex,
+                    onTap: onTap,
+                    badgeCount: 3,
+                  ),
+                  _NavItem(
+                    icon: Icons.person_outline_rounded,
+                    label: 'Profile',
+                    index: 4,
+                    current: currentIndex,
+                    onTap: onTap,
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -326,7 +686,7 @@ class BottomNav extends StatelessWidget {
   }
 }
 
-class _NavItem extends StatefulWidget {
+class _NavItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final int index;
@@ -343,77 +703,71 @@ class _NavItem extends StatefulWidget {
     this.badgeCount = 0,
   });
 
-  @override
-  State<_NavItem> createState() => _NavItemState();
-}
-
-class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 180));
-    _scale = Tween<double>(begin: 1.0, end: 1.2).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut),
-    );
-  }
-
-  @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
-
-  @override
-  void didUpdateWidget(_NavItem old) {
-    super.didUpdateWidget(old);
-    if (widget.current == widget.index && old.current != widget.index) {
-      _ctrl.forward(from: 0);
-    }
-  }
+  bool get selected => current == index;
 
   @override
   Widget build(BuildContext context) {
-    final isActive = widget.current == widget.index;
-
     return Expanded(
       child: GestureDetector(
-        onTap: () => widget.onTap(widget.index),
-        child: Container(
-          color: Colors.transparent,
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onTap(index),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              AnimatedBuilder(
-                animation: _scale,
-                builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
+              AnimatedContainer(
+                height: 35,
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOutCubic,
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: selected
+                      ? Color(0xFF6C5CE7).withOpacity(0.12)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Icon(
-                      widget.icon,
-                      size: 22,
-                      color: isActive ? DC.p : DC.gr,
+                      icon,
+                      size: 24,
+                      color: selected
+                          ?  Color(0xFF4834D4)
+                          : Colors.black.withOpacity(0.42),
                     ),
-                    if (widget.badgeCount > 0)
+                    if (badgeCount > 0)
                       Positioned(
-                        top: -4,
                         right: -6,
+                        top: -6,
                         child: Container(
-                          width: 14,
-                          height: 14,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 1,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
                           decoration: BoxDecoration(
-                            color: DC.r,
-                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFFFF6B6B), Color(0xFFEE4444)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.white, width: 1.5),
                           ),
-                          child: Center(
-                            child: Text(
-                              '${widget.badgeCount}',
-                              style: const TextStyle(
-                                fontSize: 7.5,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            badgeCount > 9 ? '9+' : '$badgeCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              height: 1.1,
                             ),
                           ),
                         ),
@@ -423,24 +777,17 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
               ),
               const SizedBox(height: 3),
               AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 180),
+                duration: const Duration(milliseconds: 220),
                 style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
-                  color: isActive ? DC.p : DC.gr,
+                  fontSize: 10.5,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                  color: selected
+                      ?  Color(0xFF4834D4)
+                      : Colors.black.withOpacity(0.38),
+                  letterSpacing: 0.1,
                 ),
-                child: Text(widget.label),
+                child: Text(label),
               ),
-              if (isActive)
-                Container(
-                  margin: const EdgeInsets.only(top: 3),
-                  width: 4,
-                  height: 4,
-                  decoration: const BoxDecoration(
-                    color: DC.p,
-                    shape: BoxShape.circle,
-                  ),
-                ),
             ],
           ),
         ),
@@ -449,56 +796,43 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
   }
 }
 
-class _NavPlusButton extends StatefulWidget {
+class _NavPlusButton extends StatelessWidget {
   final VoidCallback onTap;
+
   const _NavPlusButton({required this.onTap});
-
-  @override
-  State<_NavPlusButton> createState() => _NavPlusButtonState();
-}
-
-class _NavPlusButtonState extends State<_NavPlusButton>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
-    _scale = Tween<double>(begin: 1.0, end: 0.9)
-        .animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOut));
-  }
-
-  @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: GestureDetector(
-        onTapDown: (_) => _ctrl.forward(),
-        onTapUp: (_) { _ctrl.reverse(); widget.onTap(); },
-        onTapCancel: () => _ctrl.reverse(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedBuilder(
-              animation: _scale,
-              builder: (_, child) => Transform.scale(scale: _scale.value, child: child),
-              child: Container(
-                width: 42,
-                height: 42,
-                margin: const EdgeInsets.only(bottom: 2),
-                decoration: BoxDecoration(
-                  color: DC.p,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: DC.p3, width: 3),
-                ),
-                child: const Icon(Icons.add_rounded, color: Colors.white, size: 22),
+      child: Center(
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 46,
+            height: 46,
+            margin: const EdgeInsets.only(bottom: 2),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF6C5CE7),  Color(0xFF4834D4)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xFF6C5CE7).withOpacity(0.45),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                  spreadRadius: -2,
+                ),
+              ],
             ),
-          ],
+            child: const Icon(
+              Icons.add_rounded,
+              color: Colors.white,
+              size: 26,
+            ),
+          ),
         ),
       ),
     );
@@ -673,13 +1007,13 @@ class PostBottomSheet extends StatelessWidget {
           ),
           _SheetItem(
             icon: Icons.work_outline_rounded,
-            iconColor: DC.co,
-            iconBg: DC.co2,
+            iconColor: DC.p,
+            iconBg: DC.p,
             title: 'Post a project',
             subtitle: 'Find teammates for your next build',
             onTap: () {
               Navigator.pop(context);
-              Navigator.of(context).pushNamed('/create-project');
+              Navigator.of(context).pushNamed('/postproject');
             },
           ),
           _SheetItem(

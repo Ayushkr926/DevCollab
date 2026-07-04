@@ -228,7 +228,7 @@ class _ShowcaseCardState extends State<_ShowcaseCard>
                                         ? Icons.favorite_rounded
                                         : Icons.favorite_border_rounded,
                                     size: 13,
-                                    color: post.isLikedByMe ? DC.pk : DC.gr,
+                                    color: post.isLikedByMe ? Colors.red : Colors.green,
                                   ),
                                 ),
                               ),
@@ -236,7 +236,7 @@ class _ShowcaseCardState extends State<_ShowcaseCard>
                               Text(
                                 '${post.likes}',
                                 style: DCText.micro.copyWith(
-                                  color: post.isLikedByMe ? DC.pk : DC.gr,
+                                  color: post.isLikedByMe ? Colors.red : Colors.green,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),

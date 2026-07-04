@@ -1,7 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../services/Auth_service.dart';
 import '../utils/AppColors.dart';
+import '../utils/Appconstants.dart';
+import '../utils/validator.dart';
 import '../widgets/AuthTextfield.dart';
 import '../widgets/Step_progress_widgets.dart';
 import '../widgets/primarybutton.dart';
@@ -18,6 +22,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // ── Form ─────────────────────────────
   final _formKey = GlobalKey<FormState>();
+  late final AnimationController _shakeController;
+  late final AnimationController _errorController;
 
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -30,9 +36,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // ── State ────────────────────────────
   bool _obscurePassword = true;
   bool _isLoading = false;
+  bool _iserror = false;
   int _currentStep = 1;
 
+  String? _emailError;
+  String? _passwordError;
+
   String? _globalError;
+
+
+
 
 
   Future<void> _handleGitHubLogin() async {
@@ -58,6 +71,180 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
+  bool _validateForm() {
+    bool valid = true;
+    setState(() {
+      _emailError = null;
+      _passwordError = null;
+      _globalError = null;
+    });
+
+    final emailErr = Validators.email(_emailController.text.trim());
+    if (emailErr != null) {
+      setState(() => _emailError = emailErr);
+      valid = false;
+    }
+
+    final passErr = Validators.loginPassword(_passwordController.text);
+    if (passErr != null) {
+      setState(() => _passwordError = passErr);
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  Future<void> _handleemailregister() async {
+    debugPrint("========== REGISTER START ==========");
+
+    FocusScope.of(context).unfocus();
+
+    debugPrint("Email: ${_emailController.text.trim().toLowerCase()}");
+
+    if (!_validateForm()) {
+      debugPrint("❌ Form validation failed");
+      _triggerShake();
+      return;
+    }
+
+    debugPrint("✅ Form validation passed");
+
+    setState(() {
+      _isLoading = true;
+      _globalError = null;
+    });
+
+    try {
+      debugPrint("Creating Dio instance...");
+      final dio = Dio();
+
+      final url = '${AppConstants.baseUrl}/api/auth/register';
+      debugPrint("POST URL: $url");
+
+      final requestData = {
+        'name':_nameController.text,
+        'email': _emailController.text.trim().toLowerCase(),
+        'password': _passwordController.text,
+      };
+
+      debugPrint("Request Body: $requestData");
+
+      final response = await dio.post(
+        url,
+        data: requestData,
+        options: Options(
+          headers: {'Content-Type': 'application/json'},
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+          sendTimeout: const Duration(seconds: 10),
+        ),
+      );
+
+      debugPrint("✅ Response Received");
+      debugPrint("Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
+      if (!mounted) {
+        debugPrint("Widget not mounted");
+        return;
+      }
+
+      if (response.statusCode == 201) {
+        final data = response.data as Map<String, dynamic>;
+
+        debugPrint("Parsing response...");
+
+        final token = data['token'] as String;
+        final user = data['user'] as Map<String, dynamic>;
+
+        debugPrint("Token: $token");
+        debugPrint("User: $user");
+
+        debugPrint("Saving token...");
+        await AuthService.saveToken(token);
+
+        debugPrint("Saving user...");
+        await AuthService.saveUser(user);
+
+        debugPrint("Data saved successfully");
+
+        if (!mounted) {
+          debugPrint("Widget unmounted before navigation");
+          return;
+        }
+
+        debugPrint("Navigating to /register2");
+
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          '/register2',
+              (route) => false,
+        );
+
+        debugPrint("Navigation complete");
+      }
+    } on DioException catch (e) {
+      debugPrint("========== DIO EXCEPTION ==========");
+      debugPrint("Type: ${e.type}");
+      debugPrint("Message: ${e.message}");
+      debugPrint("Status Code: ${e.response?.statusCode}");
+      debugPrint("Response Data: ${e.response?.data}");
+      debugPrint("Error: ${e.error}");
+
+      if (!mounted) return;
+
+      setState(() => _isLoading = false);
+
+      final statusCode = e.response?.statusCode;
+      final message = e.response?.data?['message'];
+
+      if (statusCode == 401) {
+        _globalError = 'Invalid email or password';
+      } else if (statusCode == 403) {
+        _globalError = 'Please verify your email';
+      } else if (statusCode == 429) {
+        _globalError = 'Too many attempts. Try later.';
+      } else if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        _globalError = 'Connection timeout. Check internet.';
+      } else if (e.type == DioExceptionType.connectionError) {
+        _globalError = 'No internet connection.';
+      } else {
+        _globalError = message ?? 'Something went wrong';
+      }
+
+      debugPrint("Global Error: $_globalError");
+
+      setState(() {});
+      _errorController.forward(from: 0);
+    } catch (e, stackTrace) {
+      debugPrint("========== UNKNOWN ERROR ==========");
+      debugPrint("Error: $e");
+      debugPrint("StackTrace: $stackTrace");
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _globalError = e.toString();
+        });
+      }
+    } finally {
+      debugPrint("========== REGISTER END ==========");
+
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+
+  void _triggerShake() {
+    _shakeController.forward(from: 0).then((_) => _shakeController.reset());
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -199,6 +386,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
+
         Container(
           width: 68,
           height: 68,
@@ -277,10 +465,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return PrimaryButton(
       label: "Create Account",
       isLoading: _isLoading,
-      onPressed: () {
-        // TODO: Register API
-        Navigator.pushNamed(context, '/register2');
-      },
+      onPressed: _isLoading ? null : _handleemailregister,
     );
   }
 

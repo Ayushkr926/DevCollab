@@ -50,44 +50,86 @@ class Hackathon {
   int get secondsLeft => (timeRemaining.inSeconds % 60).clamp(0, 59);
 }
 
-// lib/models/developer_story.dart
 
 class DeveloperStory {
   final String userId;
   final String name;
   final String initials;
-  final int colorIndex;
-  final bool isOnline;
-  final bool hasUnseenStory;
+
+  /// Profile image
+  final String profileImage;
+
+  /// Story media (image/video)
+  final String storyUrl;
+
+  /// true = video, false = image
+  final bool isVideo;
+
+  /// Story viewed by current user
+  final bool hasSeen;
+
+  /// Border colors
+  final String seenBorderColor;
+  final String unseenBorderColor;
 
   const DeveloperStory({
     required this.userId,
     required this.name,
     required this.initials,
-    required this.colorIndex,
-    required this.isOnline,
-    required this.hasUnseenStory,
+    required this.profileImage,
+    required this.storyUrl,
+    required this.isVideo,
+    required this.hasSeen,
+    required this.seenBorderColor,
+    required this.unseenBorderColor,
   });
 
   factory DeveloperStory.fromJson(Map<String, dynamic> json) {
-    final name = json['name'] as String;
+    final name = json['name'] ?? '';
+
     return DeveloperStory(
-      userId: json['_id'] as String,
+      userId: json['_id'] ?? '',
       name: name,
       initials: _initials(name),
-      colorIndex: json['colorIndex'] as int? ?? 0,
-      isOnline: json['isOnline'] as bool? ?? false,
-      hasUnseenStory: json['hasUnseenStory'] as bool? ?? false,
+
+      profileImage: json['profileImage'] ?? '',
+      storyUrl: json['storyUrl'] ?? '',
+
+      isVideo: json['isVideo'] ?? false,
+      hasSeen: json['hasSeen'] ?? false,
+
+      seenBorderColor: json['seenBorderColor'] ?? '#9E9E9E',
+      unseenBorderColor: json['unseenBorderColor'] ?? '#FF2D55',
     );
   }
 
   static String _initials(String name) {
-    final parts = name.trim().split(' ');
-    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-    return name.substring(0, 2).toUpperCase();
+    if (name.trim().isEmpty) return '';
+
+    final parts = name.trim().split(RegExp(r'\s+'));
+
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+
+    return name.length >= 2
+        ? name.substring(0, 2).toUpperCase()
+        : name.toUpperCase();
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': userId,
+      'name': name,
+      'profileImage': profileImage,
+      'storyUrl': storyUrl,
+      'isVideo': isVideo,
+      'hasSeen': hasSeen,
+      'seenBorderColor': seenBorderColor,
+      'unseenBorderColor': unseenBorderColor,
+    };
   }
 }
-
 // lib/models/home_user.dart
 
 class HomeUser {

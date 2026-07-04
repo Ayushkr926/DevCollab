@@ -5,9 +5,7 @@ import '../models/hackathon.dart';
 import '../models/showcase_post.dart';
 import '../services/auth_service.dart';
 import '../utils/Appconstants.dart';
-/// All network calls for the Home screen.
-/// The Provider talks to this; this talks to the API.
-/// Nothing in the UI layer touches Dio directly.
+
 class HomeRepository {
   HomeRepository() {
     _dio = Dio(

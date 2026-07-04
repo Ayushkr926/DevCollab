@@ -193,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen>
 
         if (!mounted) return;
 
-        // Navigate to home — clear the stack so back button doesn't go to login
         Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',
               (route) => false,

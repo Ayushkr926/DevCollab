@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import '../../utils/app_theme.dart';
+import '../../utils/AppColors.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DcAvatar — circular avatar with initials and online dot
@@ -27,6 +27,7 @@ class DcAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Stack(
@@ -39,7 +40,7 @@ class DcAvatar extends StatelessWidget {
               color: DC.avatarBg(colorIndex),
               shape: BoxShape.circle,
               border: hasBorder
-                  ? Border.all(color: DC.p, width: 2)
+                  ? Border.all(color: c.primary, width: 2)
                   : null,
             ),
             child: Center(
@@ -64,7 +65,7 @@ class DcAvatar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: DC.g,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
+                  border: Border.all(color: c.surface, width: 1.5),
                 ),
               ),
             ),
@@ -75,7 +76,7 @@ class DcAvatar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// DcBadge — colored status pill
+// DcBadge — colored status pill (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class DcBadge extends StatelessWidget {
   final String label;
@@ -89,10 +90,10 @@ class DcBadge extends StatelessWidget {
     this.textColor = DC.p4,
   });
 
-  factory DcBadge.open()      => const DcBadge(label: 'Open',     bg: DC.g2,  textColor: DC.g3);
-  factory DcBadge.hackathon() => const DcBadge(label: 'Hackathon',bg: DC.p3,  textColor: DC.p4);
-  factory DcBadge.freelance() => const DcBadge(label: 'Freelance',bg: DC.a2,  textColor: DC.a3);
-  factory DcBadge.personal()  => const DcBadge(label: 'Personal', bg: DC.g2,  textColor: DC.g3);
+  factory DcBadge.open()      => const DcBadge(label: 'Open',     bg: DC.g2, textColor: DC.g3);
+  factory DcBadge.hackathon() => const DcBadge(label: 'Hackathon',bg: DC.p3, textColor: DC.p4);
+  factory DcBadge.freelance() => const DcBadge(label: 'Freelance',bg: DC.a2, textColor: DC.a3);
+  factory DcBadge.personal()  => const DcBadge(label: 'Personal', bg: DC.g2, textColor: DC.g3);
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +106,7 @@ class DcBadge extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// AiBadge — pulsing purple AI indicator
+// AiBadge — pulsing AI indicator (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class AiBadge extends StatefulWidget {
   final String label;
@@ -134,12 +135,13 @@ class _AiBadgeState extends State<AiBadge> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(
-        color: DC.p3,
+        color: c.primaryLight,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFAFA9EC), width: 0.5),
+        border: Border.all(color: c.primary.withValues(alpha: 0.3), width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -150,11 +152,11 @@ class _AiBadgeState extends State<AiBadge> with SingleTickerProviderStateMixin {
             child: Container(
               width: 5,
               height: 5,
-              decoration: const BoxDecoration(color: DC.p, shape: BoxShape.circle),
+              decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle),
             ),
           ),
           const SizedBox(width: 5),
-          Text(widget.label, style: DCText.micro.copyWith(color: DC.p)),
+          Text(widget.label, style: DCText.micro.copyWith(color: c.primary)),
         ],
       ),
     );
@@ -162,7 +164,7 @@ class _AiBadgeState extends State<AiBadge> with SingleTickerProviderStateMixin {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SkillPill — small tech tag chip
+// SkillPill — small tech tag chip (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class SkillPill extends StatelessWidget {
   final String label;
@@ -170,17 +172,21 @@ class SkillPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Container(
       margin: const EdgeInsets.only(right: 4, bottom: 4),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: DC.p3, borderRadius: BorderRadius.circular(6)),
-      child: Text(label, style: DCText.tag),
+      decoration: BoxDecoration(color: c.primaryLight, borderRadius: BorderRadius.circular(6)),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: c.primary),
+      ),
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SectionHeader — "Title" + "See all →" row
+// SectionHeader — "Title" + "See all →" row (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class SectionHeader extends StatelessWidget {
   final String title;
@@ -198,6 +204,7 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
       child: Row(
@@ -206,19 +213,19 @@ class SectionHeader extends StatelessWidget {
             _PulseDot(),
             const SizedBox(width: 6),
           ],
-          Text(title, style: DCText.h3),
+          Text(title, style: DCText.h3.copyWith(color: c.textPrimary)),
           const Spacer(),
           if (trailing != null)
             trailing!
           else if (onSeeAll != null)
             GestureDetector(
               onTap: onSeeAll,
-              child: const Text(
+              child: Text(
                 'See all',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: DC.p,
+                  color: c.primary,
                 ),
               ),
             ),
@@ -251,6 +258,7 @@ class _PulseDotState extends State<_PulseDot> with SingleTickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return AnimatedBuilder(
       animation: _scale,
       builder: (_, __) => Transform.scale(
@@ -258,7 +266,7 @@ class _PulseDotState extends State<_PulseDot> with SingleTickerProviderStateMixi
         child: Container(
           width: 7,
           height: 7,
-          decoration: const BoxDecoration(color: DC.p, shape: BoxShape.circle),
+          decoration: BoxDecoration(color: c.primary, shape: BoxShape.circle),
         ),
       ),
     );
@@ -266,7 +274,7 @@ class _PulseDotState extends State<_PulseDot> with SingleTickerProviderStateMixi
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Skeleton loader — grey shimmer placeholder
+// Skeleton loader — shimmer placeholder (theme-aware)
 // ─────────────────────────────────────────────────────────────────────────────
 class DcSkeleton extends StatefulWidget {
   final double width;
@@ -311,6 +319,7 @@ class _DcSkeletonState extends State<DcSkeleton> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return AnimatedBuilder(
       animation: _opacity,
       builder: (_, __) => Opacity(
@@ -319,7 +328,7 @@ class _DcSkeletonState extends State<DcSkeleton> with SingleTickerProviderStateM
           width: widget.width,
           height: widget.height,
           decoration: BoxDecoration(
-            color: DC.bg2,
+            color: c.surfaceMuted,
             borderRadius: BorderRadius.circular(widget.radius),
           ),
         ),

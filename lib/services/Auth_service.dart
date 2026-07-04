@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Handles all JWT storage, retrieval, and validation.
-/// Used by SplashScreen and all authenticated screens.
+
 class AuthService {
   static const _storage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),

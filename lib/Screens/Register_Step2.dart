@@ -1,36 +1,23 @@
 import 'package:devcollab/widgets/Step_progress_widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/register2step_provider.dart';
 
-class RegisterScreen2 extends StatefulWidget {
+class RegisterScreen2 extends StatelessWidget {
   const RegisterScreen2({super.key});
 
   @override
-  State<RegisterScreen2> createState() => _RegisterScreen2State();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => RegisterProvider(),
+      child: const _RegisterScreen2Content(),
+    );
+  }
 }
 
-class _RegisterScreen2State extends State<RegisterScreen2> {
-  // ── Skills ────────────────────────────
-  final List<String> _allSkills = [
-    'Flutter', 'Node.js', 'React', 'Vue.js',
-    'MongoDB', 'Python', 'Swift', 'Kotlin',
-    'Figma', 'Firebase', 'Docker', 'AWS',
-    'ML/AI', 'GraphQL', 'Go',
-  ];
-  List<String> _selectedSkills = [];
+class _RegisterScreen2Content extends StatelessWidget {
+  const _RegisterScreen2Content();
 
-  // ── Experience ────────────────────────
-  String _experience = 'Junior';
-  final _experienceLevels = ['Student', 'Junior', 'Mid', 'Senior', 'Lead'];
-
-  // ── Open To ───────────────────────────
-  List<String> _openTo = ['Hackathons', 'Freelance'];
-  final _openToOptions = ['Hackathons', 'Freelance', 'Full-time', 'Open source'];
-
-  // ── Availability ──────────────────────
-  String _availability = 'Available';
-  final _availabilityOptions = ['Available', 'Part-time', 'Busy'];
-
-  static const _purple = Color(0xFF6C63FF);
   static const _bg = Colors.white;
   static const _surface = Color(0xFF1E1E2A);
   static const _border = Color(0xFF2E2E3E);
@@ -39,23 +26,23 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<RegisterProvider>();
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 28, 24, 24),
               child: StepProgressBar(currentStep: 2, totalSteps: 3),
             ),
 
-            // ── Scrollable content ────────────────────
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Header
                     const Text(
                       'What can you build?',
                       style: TextStyle(
@@ -75,51 +62,40 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-
                     const SizedBox(height: 12),
 
-                    // ── SKILLS ──────────────────────────────
                     _sectionLabel('SKILLS'),
                     const SizedBox(height: 12),
-                    _buildSkillsWrap(),
+                    _buildSkillsWrap(context, provider),
 
                     const SizedBox(height: 28),
 
-                    // ── EXPERIENCE LEVEL ────────────────────
                     _sectionLabel('EXPERIENCE LEVEL'),
                     const SizedBox(height: 12),
                     _buildSingleSelectRow(
-                      options: _experienceLevels,
-                      selected: _experience,
-                      onSelect: (v) => setState(() => _experience = v),
+                      options: provider.experienceLevels,
+                      selected: provider.experience,
+                      onSelect: (v) => provider.selectExperience(v),
                     ),
 
                     const SizedBox(height: 28),
 
-                    // ── OPEN TO ─────────────────────────────
                     _sectionLabel('OPEN TO'),
                     const SizedBox(height: 12),
                     _buildMultiSelectWrap(
-                      options: _openToOptions,
-                      selected: _openTo,
-                      onToggle: (v) {
-                        setState(() {
-                          _openTo.contains(v)
-                              ? _openTo.remove(v)
-                              : _openTo.add(v);
-                        });
-                      },
+                      options: provider.openToOptions,
+                      selected: provider.openTo,
+                      onToggle: (v) => provider.toggleOpenTo(v),
                     ),
 
                     const SizedBox(height: 28),
 
-                    // ── AVAILABILITY ────────────────────────
                     _sectionLabel('AVAILABILITY'),
                     const SizedBox(height: 12),
                     _buildSingleSelectRow(
-                      options: _availabilityOptions,
-                      selected: _availability,
-                      onSelect: (v) => setState(() => _availability = v),
+                      options: provider.availabilityOptions,
+                      selected: provider.availability,
+                      onSelect: (v) => provider.selectAvailability(v),
                     ),
 
                     const SizedBox(height: 32),
@@ -128,34 +104,13 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
               ),
             ),
 
-            // ── Continue button ───────────────────────
-            _buildContinueButton(),
+            _buildContinueButton(context, provider),
           ],
         ),
       ),
     );
   }
 
-  // ── Progress bar (3 segments) ─────────────────────────────────────────────
-  Widget _buildProgressBar() {
-    return Row(
-      children: List.generate(3, (i) {
-        final filled = i < 2;
-        return Expanded(
-          child: Container(
-            margin: EdgeInsets.only(right: i < 2 ? 6 : 0),
-            height: 4,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(2),
-              color: filled ? _purple : _border,
-            ),
-          ),
-        );
-      }),
-    );
-  }
-
-  // ── Section label ─────────────────────────────────────────────────────────
   Widget _sectionLabel(String text) {
     return Text(
       text,
@@ -168,27 +123,22 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 
-  // ── Skills wrap (with add button) ─────────────────────────────────────────
-  Widget _buildSkillsWrap() {
+  Widget _buildSkillsWrap(BuildContext context, RegisterProvider provider) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: [
-        ..._allSkills.map((skill) {
-          final isSelected = _selectedSkills.contains(skill);
+        ...provider.allSkills.map((skill) {  // Note: _allSkills is private, you can expose a getter if you prefer
+          final isSelected = provider.selectedSkills.contains(skill);
           return _chip(
             label: skill,
             selected: isSelected,
-            onTap: () => setState(() {
-              isSelected
-                  ? _selectedSkills.remove(skill)
-                  : _selectedSkills.add(skill);
-            }),
+            onTap: () => provider.toggleSkill(skill),
           );
         }),
         // Add button
         GestureDetector(
-          onTap: _showAddSkillDialog,
+          onTap: () => _showAddSkillDialog(context, provider),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
@@ -214,11 +164,10 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 
-  // ── Single-select pill row ────────────────────────────────────────────────
   Widget _buildSingleSelectRow({
     required List<String> options,
     required String selected,
-    required void Function(String) onSelect,
+    required Function(String) onSelect,
   }) {
     return Wrap(
       spacing: 8,
@@ -230,25 +179,24 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 
-  // ── Multi-select wrap ─────────────────────────────────────────────────────
   Widget _buildMultiSelectWrap({
     required List<String> options,
     required List<String> selected,
-    required void Function(String) onToggle,
+    required Function(String) onToggle,
   }) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: options.map((o) {
         return _chip(
-            label: o,
-            selected: selected.contains(o),
-            onTap: () => onToggle(o));
+          label: o,
+          selected: selected.contains(o),
+          onTap: () => onToggle(o),
+        );
       }).toList(),
     );
   }
 
-  // ── Reusable chip ─────────────────────────────────────────────────────────
   Widget _chip({
     required String label,
     required bool selected,
@@ -261,10 +209,10 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? _purple : Colors.transparent,
+          color: selected ? RegisterProvider.purple : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected ? _purple : _border,
+            color: selected ? RegisterProvider.purple : _border,
             width: 1.5,
           ),
         ),
@@ -281,8 +229,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
             ),
             if (selected) ...[
               const SizedBox(width: 6),
-              const Icon(Icons.check_rounded,
-                  size: 13, color: Colors.white),
+              const Icon(Icons.check_rounded, size: 13, color: Colors.white),
             ],
           ],
         ),
@@ -290,9 +237,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
     );
   }
 
-  // ── Continue button ───────────────────────────────────────────────────────
-  Widget _buildContinueButton() {
-    final canContinue = _selectedSkills.isNotEmpty;
+  Widget _buildContinueButton(BuildContext context, RegisterProvider provider) {
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
       decoration: BoxDecoration(
@@ -303,45 +248,31 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
         width: double.infinity,
         height: 54,
         child: AnimatedOpacity(
-          opacity: canContinue ? 1.0 : 0.4,
+          opacity: provider.canContinue ? 1.0 : 0.4,
           duration: const Duration(milliseconds: 200),
           child: ElevatedButton(
-            onPressed: canContinue
-                ? () => Navigator.pushNamed(context, '/register3')
-                : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _purple,
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: _purple,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Continue',
-                  style: TextStyle(
-                    fontSize: 16,
-
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.2,
-                  ),
-                ),
-                SizedBox(width: 8),
-                Icon(Icons.arrow_forward_rounded, size: 18),
-              ],
-            ),
-          ),
+            onPressed: provider.isLoading
+                ? null
+                : () async {
+              final success = await provider.register();
+              if (success) {
+                Navigator.pushNamed(context, '/register3');
+              } else if (provider.errorMessage != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(provider.errorMessage!)),
+                );
+              }
+            },
+            child: provider.isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text('Continue'),
+          )
         ),
       ),
     );
   }
 
-  // ── Add Skill Dialog ──────────────────────────────────────────────────────
-  void _showAddSkillDialog() {
+  void _showAddSkillDialog(BuildContext context, RegisterProvider provider) {
     final controller = TextEditingController();
     String? errorText;
 
@@ -352,8 +283,7 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 280),
       transitionBuilder: (_, animation, __, child) {
-        final curved =
-        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
+        final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
         return ScaleTransition(
           scale: Tween<double>(begin: 0.9, end: 1.0).animate(curved),
           child: FadeTransition(opacity: curved, child: child),
@@ -382,17 +312,13 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                   borderRadius: BorderRadius.circular(24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Header
+                      // Header (same as before)
                       Container(
                         padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
-                            colors: [
-                              _purple.withOpacity(0.18),
-                              _surface,
-                            ],
+                            colors: [RegisterProvider.purple.withOpacity(0.18), _surface],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),
@@ -403,27 +329,18 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                               width: 38,
                               height: 38,
                               decoration: BoxDecoration(
-                                color: _purple.withOpacity(0.15),
+                                color: RegisterProvider.purple.withOpacity(0.15),
                                 borderRadius: BorderRadius.circular(11),
                               ),
-                              child: const Icon(Icons.auto_awesome_rounded,
-                                  size: 18, color: _purple),
+                              child: const Icon(Icons.auto_awesome_rounded, size: 18, color: RegisterProvider.purple),
                             ),
                             const SizedBox(width: 12),
-                            Column(
+                            const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: const [
-                                Text('Add a Skill',
-                                    style: TextStyle(
-                                      color: _bg,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.3,
-                                    )),
+                              children: [
+                                Text('Add a Skill', style: TextStyle(color: _bg, fontSize: 17, fontWeight: FontWeight.w700, letterSpacing: -0.3)),
                                 SizedBox(height: 2),
-                                Text('Appears on your profile',
-                                    style: TextStyle(
-                                        color: _bg, fontSize: 12)),
+                                Text('Appears on your profile', style: TextStyle(color: _bg, fontSize: 12)),
                               ],
                             ),
                           ],
@@ -435,97 +352,52 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Input
                             TextField(
                               controller: controller,
                               autofocus: true,
-                              style: const TextStyle(
-                                  color: _textPrimary,
-                                  fontWeight: FontWeight.w500),
+                              style: const TextStyle(color: _textPrimary, fontWeight: FontWeight.w500),
                               decoration: InputDecoration(
                                 hintText: 'e.g. Next.js, Figma, Python…',
-                                hintStyle:
-                                const TextStyle(color: _textSecondary),
+                                hintStyle: const TextStyle(color: _textSecondary),
                                 errorText: errorText,
-                                prefixIcon: const Icon(Icons.code_rounded,
-                                    size: 15, color: _textSecondary),
+                                prefixIcon: const Icon(Icons.code_rounded, size: 15, color: _textSecondary),
                                 filled: true,
                                 fillColor: _bg,
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide:
-                                  const BorderSide(color: _border),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide:
-                                  const BorderSide(color: _border),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                      color: _purple, width: 1.5),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 13),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: _border)),
+                                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: _border)),
+                                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: RegisterProvider.purple, width: 1.5)),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
                               ),
                               onChanged: (_) {
-                                if (errorText != null) {
-                                  setDialogState(() => errorText = null);
-                                }
+                                if (errorText != null) setDialogState(() => errorText = null);
                               },
-                              onSubmitted: (_) => _handleAdd(
-                                  controller, setDialogState, (e) {
-                                errorText = e;
-                              }),
+                              onSubmitted: (_) => _handleAdd(controller, setDialogState,context, provider, (e) => errorText = e),
                             ),
 
-                            // Live chip preview
+                            // Preview chip (same as before)
                             AnimatedSize(
                               duration: const Duration(milliseconds: 200),
-                              curve: Curves.easeOutCubic,
                               child: ValueListenableBuilder(
                                 valueListenable: controller,
                                 builder: (_, value, __) {
                                   final text = value.text.trim();
-                                  if (text.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
+                                  if (text.isEmpty) return const SizedBox.shrink();
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 14),
                                     child: Column(
-                                      crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        const Text('PREVIEW',
-                                            style: TextStyle(
-                                                color: _bg,
-                                                fontSize: 10,
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: 1.0)),
+                                        const Text('PREVIEW', style: TextStyle(color: _bg, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.0)),
                                         const SizedBox(height: 8),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 14, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: _purple,
-                                            borderRadius:
-                                            BorderRadius.circular(20),
-                                          ),
+                                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                          decoration: BoxDecoration(color: RegisterProvider.purple, borderRadius: BorderRadius.circular(20)),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text(text,
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 13,
-                                                  )),
+                                              Text(text, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13)),
                                               const SizedBox(width: 6),
-                                              const Icon(
-                                                  Icons.check_rounded,
-                                                  size: 13,
-                                                  color: Colors.white),
+                                              const Icon(Icons.check_rounded, size: 13, color: Colors.white),
                                             ],
                                           ),
                                         ),
@@ -535,13 +407,11 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                                 },
                               ),
                             ),
-
                             const SizedBox(height: 18),
                           ],
                         ),
                       ),
 
-                      // Actions
                       Padding(
                         padding: const EdgeInsets.fromLTRB(22, 0, 22, 20),
                         child: Row(
@@ -551,39 +421,25 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
                                 onPressed: () => Navigator.pop(context),
                                 style: TextButton.styleFrom(
                                   backgroundColor: _bg,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 13),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                    side: const BorderSide(color: _bg),
-                                  ),
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: _bg)),
                                 ),
-                                child: const Text('Cancel',
-                                    style: TextStyle(color: _textSecondary)),
+                                child: const Text('Cancel', style: TextStyle(color: _textSecondary)),
                               ),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               flex: 2,
                               child: ElevatedButton.icon(
-                                onPressed: () => _handleAdd(
-                                    controller, setDialogState, (e) {
-                                  errorText = e;
-                                }),
+                                onPressed: () => _handleAdd(controller, setDialogState, context,provider, (e) => errorText = e),
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _purple,
+                                  backgroundColor: RegisterProvider.purple,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 13),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 13),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
                                 icon: const Icon(Icons.add_rounded, size: 16),
-                                label: const Text('Add Skill',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w700)),
+                                label: const Text('Add Skill', style: TextStyle(fontWeight: FontWeight.w700)),
                               ),
                             ),
                           ],
@@ -603,6 +459,8 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
   void _handleAdd(
       TextEditingController controller,
       StateSetter setDialogState,
+      BuildContext context,
+      RegisterProvider provider,
       void Function(String?) setError,
       ) {
     final newSkill = controller.text.trim();
@@ -610,14 +468,12 @@ class _RegisterScreen2State extends State<RegisterScreen2> {
       setDialogState(() => setError('Please enter a skill name'));
       return;
     }
-    if (_selectedSkills.contains(newSkill)) {
+    if (provider.selectedSkills.contains(newSkill)) {
       setDialogState(() => setError("You've already added this skill"));
       return;
     }
-    setState(() {
-      if (!_allSkills.contains(newSkill)) _allSkills.add(newSkill);
-      _selectedSkills.add(newSkill);
-    });
+
+    provider.addNewSkill(newSkill);
     Navigator.pop(context);
   }
 }
