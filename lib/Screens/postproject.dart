@@ -314,7 +314,7 @@ class _LogisticsStep extends StatelessWidget {
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) => Theme(
         data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.light(primary: DC.p),
+          colorScheme: const ColorScheme.light(primary: DC.bg0),
         ),
         child: child!,
       ),
@@ -345,12 +345,12 @@ class _LogisticsStep extends StatelessWidget {
               decoration: BoxDecoration(
                 color: p.deadlineError != null ? const Color(0xFFFCEBEB) : Colors.white,
                 borderRadius: BorderRadius.circular(13),
-                border: Border.all(color: p.deadlineError != null ? DC.r : DC.border, width: .5),
+                border: Border.all(color: p.deadlineError != null ? DC.border : DC.border, width: .5),
               ),
               child: Row(
                 children: [
                   Icon(Icons.calendar_today_rounded, size: 15,
-                      color: p.deadline != null ? DC.p : DC.textTertiary),
+                      color: p.deadline != null ? DC.bg0 : DC.textSecondary),
                   const SizedBox(width: 10),
                   Text(
                     p.deadline != null
@@ -358,11 +358,11 @@ class _LogisticsStep extends StatelessWidget {
                         : 'Select a date',
                     style: TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w600,
-                      color: p.deadline != null ? DC.textPrimary : DC.textTertiary,
+                      color: p.deadline != null ? DC.textPrimary : DC.textSecondary,
                     ),
                   ),
                   const Spacer(),
-                  const Icon(Icons.chevron_right_rounded, size: 16, color: DC.textTertiary),
+                  const Icon(Icons.chevron_right_rounded, size: 16, color: DC.textSecondary),
                 ],
               ),
             ),
@@ -438,8 +438,8 @@ class DottedUploadBox extends StatelessWidget {
           children: [
             Container(
               width: 36, height: 36,
-              decoration: BoxDecoration(color: DC.p3, shape: BoxShape.circle),
-              child: const Icon(Icons.add_photo_alternate_outlined, size: 18, color: DC.p),
+              decoration: BoxDecoration(color: DC.bg0, shape: BoxShape.circle),
+              child: const Icon(Icons.add_photo_alternate_outlined, size: 18, color: DC.bg0),
             ),
             const SizedBox(height: 8),
             Text('Upload a banner image', style: DCText.caption.copyWith(fontWeight: FontWeight.w700)),
@@ -494,8 +494,8 @@ class _SuccessSheetState extends State<_SuccessSheet> with SingleTickerProviderS
             scale: _scale,
             child: Container(
               width: 72, height: 72,
-              decoration: const BoxDecoration(color: DC.g2, shape: BoxShape.circle),
-              child: const Icon(Icons.check_rounded, color: DC.g, size: 34),
+              decoration: const BoxDecoration(color: DC.primary, shape: BoxShape.circle),
+              child: const Icon(Icons.check_rounded, color: DC.primary, size: 34),
             ),
           ),
           const SizedBox(height: 18),
@@ -516,7 +516,7 @@ class _SuccessSheetState extends State<_SuccessSheet> with SingleTickerProviderS
               },
               child: Container(
                 height: 50,
-                decoration: BoxDecoration(color: DC.p, borderRadius: BorderRadius.circular(13)),
+                decoration: BoxDecoration(color: DC.bg0, borderRadius: BorderRadius.circular(13)),
                 child: const Center(
                   child: Text('View my project', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
                 ),

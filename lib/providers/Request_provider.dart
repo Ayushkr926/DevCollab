@@ -69,15 +69,11 @@ class RequestProvider with ChangeNotifier {
     if (_searchQuery.trim().isNotEmpty) {
       final q = _searchQuery.trim().toLowerCase();
       list = list.where((r) =>
-      r.name.toLowerCase().contains(q) ||
-          r.role.toLowerCase().contains(q) ||
-          (r.company ?? '').toLowerCase().contains(q));
+      r.requesterName.toLowerCase().contains(q) ||
+          r.recipientHeadline.toLowerCase().contains(q));
     }
 
     switch (_filter) {
-      case RequestFilter.unread:
-        list = list.where((r) => r.isUnread);
-        break;
       case RequestFilter.pending:
         list = list.where((r) => r.status.toLowerCase() == 'pending');
         break;
@@ -89,6 +85,9 @@ class RequestProvider with ChangeNotifier {
         break;
       case RequestFilter.all:
         break;
+      case RequestFilter.unread:
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
 
     final result = list.toList();
@@ -121,7 +120,6 @@ class RequestProvider with ChangeNotifier {
     _sort = sort;
     notifyListeners();
   }
-
   Future<void> _loadInitialData() async {
     clearError();
 
@@ -129,7 +127,15 @@ class RequestProvider with ChangeNotifier {
     notifyListeners();
 
     try {
+      // ===========================
+      // Get Authentication Token
+      // ===========================
       final String? token = await AuthService.getToken();
+
+      if (kDebugMode) {
+        debugPrint("========== CONNECTION REQUEST API ==========");
+        debugPrint("Token: $token");
+      }
 
       if (token == null || token.isEmpty) {
         throw Exception("Authentication token not found. Please login again.");
@@ -137,15 +143,36 @@ class RequestProvider with ChangeNotifier {
 
       final dio = Dio();
 
+      final url = "${AppConstants.baseUrl}/api/social/connections/requests";
+
+      if (kDebugMode) {
+        debugPrint("Request URL: $url");
+        debugPrint("Headers:");
+        debugPrint("Content-Type: application/json");
+        debugPrint("Authorization: Bearer $token");
+      }
+
+      // ===========================
+      // API Request
+      // ===========================
       final response = await dio.get(
-        "${AppConstants.baseUrl}api/social/connections/requests",
+        url,
         options: Options(
-          headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token'},
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
           connectTimeout: const Duration(seconds: 10),
           receiveTimeout: const Duration(seconds: 10),
           sendTimeout: const Duration(seconds: 10),
         ),
       );
+
+      if (kDebugMode) {
+        debugPrint("Status Code: ${response.statusCode}");
+        debugPrint("Response:");
+        debugPrint(response.data.toString());
+      }
 
       if (response.statusCode != 200) {
         throw Exception("Failed to load requests.");
@@ -153,31 +180,64 @@ class RequestProvider with ChangeNotifier {
 
       final Map<String, dynamic> json = response.data;
 
+      if (kDebugMode) {
+        debugPrint("Parsed JSON:");
+        debugPrint(json.toString());
+      }
+
+      // ===========================
+      // Received Requests
+      // ===========================
       final List<dynamic> requestJson =
           json["requests"] as List<dynamic>? ?? [];
+
+      if (kDebugMode) {
+        debugPrint("Received Requests Count: ${requestJson.length}");
+      }
 
       _receivedRequests = requestJson
           .map((e) => RequestModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      /// If API also returns sent requests
+      // ===========================
+      // Sent Requests
+      // ===========================
       final List<dynamic> sentJson =
           json["sentRequests"] as List<dynamic>? ?? [];
+
+      if (kDebugMode) {
+        debugPrint("Sent Requests Count: ${sentJson.length}");
+      }
 
       _sentRequests = sentJson
           .map((e) => RequestModel.fromJson(e as Map<String, dynamic>))
           .toList();
 
+      // ===========================
+      // Statistics
+      // ===========================
       _totalRequests = _receivedRequests.length + _sentRequests.length;
 
-      _totalUnreadRequests =
-          _receivedRequests.where((e) => e.isUnread).length;
+
+      if (kDebugMode) {
+        debugPrint("Total Received: ${_receivedRequests.length}");
+        debugPrint("Total Sent: ${_sentRequests.length}");
+        debugPrint("Total Requests: $_totalRequests");
+        debugPrint("Unread Requests: $_totalUnreadRequests");
+        debugPrint("========== API COMPLETED SUCCESSFULLY ==========");
+      }
 
       clearError();
     } on DioException catch (e) {
       if (kDebugMode) {
-        debugPrint("Dio Error: ${e.message}");
+        debugPrint("========== DIO ERROR ==========");
+        debugPrint("Type: ${e.type}");
+        debugPrint("Message: ${e.message}");
+        debugPrint("Status Code: ${e.response?.statusCode}");
         debugPrint("Response: ${e.response?.data}");
+        debugPrint("Request URL: ${e.requestOptions.uri}");
+        debugPrint("Headers: ${e.requestOptions.headers}");
+        debugPrint("================================");
       }
 
       switch (e.type) {
@@ -202,13 +262,20 @@ class RequestProvider with ChangeNotifier {
       }
     } catch (e, stackTrace) {
       if (kDebugMode) {
+        debugPrint("========== GENERAL ERROR ==========");
         debugPrint("Error: $e");
         debugPrintStack(stackTrace: stackTrace);
+        debugPrint("===================================");
       }
 
       _errorMessage = e.toString();
     } finally {
       _isLoading = false;
+
+      if (kDebugMode) {
+        debugPrint("Loading Finished: $_isLoading");
+      }
+
       notifyListeners();
     }
   }
@@ -258,12 +325,9 @@ class RequestProvider with ChangeNotifier {
 
       _receivedRequests[index] = _receivedRequests[index].copyWith(
         status: "Accepted",
-        isUnread: false,
         respondedAt: DateTime.now(),
       );
 
-      _totalUnreadRequests =
-          _receivedRequests.where((r) => r.isUnread).length;
 
       notifyListeners();
     } catch (e) {
@@ -278,7 +342,7 @@ class RequestProvider with ChangeNotifier {
     await Future.delayed(const Duration(milliseconds: 800));
 
     _receivedRequests.removeWhere((req) => req.id == requestId);
-    _totalUnreadRequests = _receivedRequests.where((r) => r.isUnread).length;
+    // _totalUnreadRequests = _receivedRequests.where((r) => r.isUnread).length;
 
     notifyListeners();
   }
@@ -293,13 +357,7 @@ class RequestProvider with ChangeNotifier {
   void markAsRead(String requestId) {
     final index = _receivedRequests.indexWhere((r) => r.id == requestId);
 
-    if (index != -1 && _receivedRequests[index].isUnread) {
-      _receivedRequests[index] =
-          _receivedRequests[index].copyWith(isUnread: false);
 
-      _totalUnreadRequests--;
-      notifyListeners();
-    }
   }
 }
 

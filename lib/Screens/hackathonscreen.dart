@@ -76,7 +76,7 @@ class _HackathonScreenState extends State<HackathonScreen>
                 builder: (context, provider, _) {
                   return RefreshIndicator(
                     onRefresh: provider.refresh,
-                    color: DC.p,
+                    color: DC.bg0,
                     child: CustomScrollView(
                       controller: _scrollCtrl,
                       slivers: [
@@ -141,12 +141,12 @@ class _HackathonScreenState extends State<HackathonScreen>
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
-                                        color: DC.p.withOpacity(0.1),
+                                        color: DC.bg0.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: const Text(
                                         "Sort: Soonest",
-                                        style: TextStyle(color: DC.p, fontWeight: FontWeight.w500),
+                                        style: TextStyle(color: DC.bg0, fontWeight: FontWeight.w500),
                                       ),
                                     ),
                                   ],

@@ -74,6 +74,8 @@ class _RequestCardState extends State<RequestCard> with SingleTickerProviderStat
             ? const Color(0xFFEF4444).withOpacity((-_dragX / _threshold).clamp(0, 1) * 0.18)
             : Colors.transparent;
 
+    print("name is ${r.requesterName}");
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       child: Stack(
@@ -150,10 +152,10 @@ class _RequestCardState extends State<RequestCard> with SingleTickerProviderStat
                           children: [
                             AvatarWidget(
                               heroTag: 'avatar-${r.id}',
-                              name: r.name,
-                              avatarUrl: r.avatarUrl,
-                              isOnline: r.isOnline,
-                              isVerified: r.isVerified,
+                              name: r.requesterName,
+                              avatarUrl: r.requesterProfileImage,
+                              isOnline: true,
+                              isVerified: true,
                               accent: widget.accent,
                             ),
                             const SizedBox(width: 14),
@@ -165,8 +167,9 @@ class _RequestCardState extends State<RequestCard> with SingleTickerProviderStat
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          r.name,
+                                          r.requesterName,
                                           style: const TextStyle(
+                                            color: Colors.black,
                                               fontWeight: FontWeight.w800, fontSize: 16.5),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
@@ -180,65 +183,43 @@ class _RequestCardState extends State<RequestCard> with SingleTickerProviderStat
                                     ],
                                   ),
                                   const SizedBox(height: 3),
-                                  Text(
-                                    r.company != null && r.company!.isNotEmpty
-                                        ? '${r.role} · ${r.company}'
-                                        : r.role,
-                                    style: TextStyle(
-                                        color: Colors.grey.shade600,
-                                        fontSize: 13.5,
-                                        fontWeight: FontWeight.w500),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (r.mutualConnections > 0) ...[
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      '${r.mutualConnections} mutual connection${r.mutualConnections == 1 ? '' : 's'}',
-                                      style: TextStyle(
-                                          color: widget.accent,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
+                                  // Text(
+                                  //   r.company != null && r.company!.isNotEmpty
+                                  //       ? '${r.role} · ${r.company}'
+                                  //       : r.role,
+                                  //   style: TextStyle(
+                                  //       color: Colors.grey.shade600,
+                                  //       fontSize: 13.5,
+                                  //       fontWeight: FontWeight.w500),
+                                  //   maxLines: 1,
+                                  //   overflow: TextOverflow.ellipsis,
+                                  // ),
+                                  // if (r.mutualConnections > 0) ...[
+                                  //   const SizedBox(height: 4),
+                                  //   Text(
+                                  //     '${r.mutualConnections} mutual connection${r.mutualConnections == 1 ? '' : 's'}',
+                                  //     style: TextStyle(
+                                  //         color: widget.accent,
+                                  //         fontSize: 12,
+                                  //         fontWeight: FontWeight.w600),
+                                  //   ),
+                                  // ],
                                 ],
                               ),
                             ),
                             if (!widget.isReceived) StatusChip(status: r.status),
                           ],
                         ),
-                        if (r.message != null && r.message!.isNotEmpty) ...[
-                          const SizedBox(height: 14),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-                            decoration: BoxDecoration(
-                              color: widget.accent.withOpacity(0.06),
-                              border: Border.all(color: widget.accent.withOpacity(0.14)),
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Text(
-                              '"${r.message}"',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                        if (r.skills.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: r.skills.take(5).map((s) => _SkillChip(s, widget.accent)).toList(),
-                          ),
-                        ],
+                        // if (r.skills.isNotEmpty) ...[
+                        //   const SizedBox(height: 12),
+                        //   Wrap(
+                        //     spacing: 8,
+                        //     runSpacing: 8,
+                        //     children: r.skills.take(5).map((s) => _SkillChip(s, widget.accent)).toList(),
+                        //   ),
+                        // ],
                         if (widget.isReceived) ...[
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 1),
                           Divider(color: Colors.grey.withOpacity(0.15), height: 1),
                           const SizedBox(height: 14),
                           RequestActions(

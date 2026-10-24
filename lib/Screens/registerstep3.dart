@@ -22,7 +22,7 @@ class RegisterScreen3 extends StatelessWidget {
 class _RegisterScreen3Content extends StatelessWidget {
   const _RegisterScreen3Content();
 
-  static const _purple = DC.p2;
+  static const _purple = DC.bg2;
   static const _bg = DC.bg2;
   static const _surface = DC.bg0;
   static const _border = Color(0xFF2E2E3E);

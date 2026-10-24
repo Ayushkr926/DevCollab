@@ -78,7 +78,7 @@ class DevCollabApp extends StatelessWidget {
         themeMode: themeProvider.mode,
         initialRoute: '/',
         routes: {
-          '/': (_) => const SplashScreen(),
+          '/': (_) => const LoginScreen(),
           '/login':     (_) => const LoginScreen(),
           '/register':  (_) => const RegisterScreen(),
           '/register2': (_) => const RegisterScreen2(),

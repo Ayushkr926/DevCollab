@@ -74,10 +74,10 @@ class RequestDetailSheet extends StatelessWidget {
                 children: [
                   AvatarWidget(
                     heroTag: 'avatar-${request.id}-detail',
-                    name: request.name,
-                    avatarUrl: request.avatarUrl,
-                    isOnline: request.isOnline,
-                    isVerified: request.isVerified,
+                    name: request.requesterName,
+                    avatarUrl: request.requesterProfileImage,
+                    isOnline: true,
+                    isVerified: true,
                     accent: accent,
                     size: 76,
                   ),
@@ -86,15 +86,10 @@ class RequestDetailSheet extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(request.name,
+                        Text(request.requesterName,
                             style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
                         const SizedBox(height: 4),
-                        Text(
-                          request.company != null && request.company!.isNotEmpty
-                              ? '${request.role} at ${request.company}'
-                              : request.role,
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13.5),
-                        ),
+
                         const SizedBox(height: 8),
                         if (!isReceived) StatusChip(status: request.status),
                       ],
@@ -102,13 +97,13 @@ class RequestDetailSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              if (request.mutualConnections > 0) ...[
-                const SizedBox(height: 18),
-                _SectionLabel('Mutual Connections'),
-                const SizedBox(height: 8),
-                Text('${request.mutualConnections} people you both know',
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13.5)),
-              ],
+              // if (request.mutualConnections > 0) ...[
+              //   const SizedBox(height: 18),
+              //   _SectionLabel('Mutual Connections'),
+              //   const SizedBox(height: 8),
+              //   Text('${request.mutualConnections} people you both know',
+              //       style: TextStyle(color: Colors.grey.shade600, fontSize: 13.5)),
+              // ],
               if (request.message != null && request.message!.isNotEmpty) ...[
                 const SizedBox(height: 20),
                 _SectionLabel('Message'),
@@ -126,27 +121,27 @@ class RequestDetailSheet extends StatelessWidget {
                           color: isDark ? Colors.grey.shade300 : Colors.grey.shade800)),
                 ),
               ],
-              if (request.skills.isNotEmpty) ...[
-                const SizedBox(height: 20),
-                _SectionLabel('Skills'),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: request.skills
-                      .map((s) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                            decoration: BoxDecoration(
-                              color: accent.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(s,
-                                style: TextStyle(
-                                    color: accent, fontWeight: FontWeight.w600, fontSize: 12.5)),
-                          ))
-                      .toList(),
-                ),
-              ],
+              // if (request.skills.isNotEmpty) ...[
+              //   const SizedBox(height: 20),
+              //   _SectionLabel('Skills'),
+              //   const SizedBox(height: 10),
+              //   Wrap(
+              //     spacing: 8,
+              //     runSpacing: 8,
+              //     children: request.skills
+              //         .map((s) => Container(
+              //               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+              //               decoration: BoxDecoration(
+              //                 color: accent.withOpacity(0.08),
+              //                 borderRadius: BorderRadius.circular(10),
+              //               ),
+              //               child: Text(s,
+              //                   style: TextStyle(
+              //                       color: accent, fontWeight: FontWeight.w600, fontSize: 12.5)),
+              //             ))
+              //         .toList(),
+              //   ),
+              // ],
               if (isReceived) ...[
                 const SizedBox(height: 28),
                 Row(

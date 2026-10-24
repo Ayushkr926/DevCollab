@@ -108,44 +108,110 @@ class _ExplorescreenState extends State<Explorescreen>
                 child: SlideTransition(
                   position: _entrySlide,
                   child: RefreshIndicator(
-                    color: DC.p,
+                    color: DC.bg0,
                     onRefresh: provider.refresh,
                     child: CustomScrollView(
                       controller: _scrollCtrl,
                       physics: const AlwaysScrollableScrollPhysics(),
                       slivers: [
-                        SliverAppBar(
-                          backgroundColor: DC.bg1,
-                          floating: true,
-                          snap: true,
-                          elevation: 0,
-                          title: const Text(
-                            "Discover Talent",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          actions: [
-                            IconButton(
-                              icon: const Icon(Icons.tune_rounded),
-                              onPressed: () => _showAdvancedFilter(context),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text("Explore",style: DCText.h1,),
+                                    Text("Discover.Connect.Collaborate",style: TextStyle(fontSize: 15,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xff4B2DC5),
+                                        letterSpacing: -0.5),),
+                                    
+                                    Text("One place to find the right \n people for your next big idea.",style: DCText.caption,)
+
+
+                                  ],
+                                ),
+                                const Spacer(),
+                                CircleAvatar(
+                                  child: IconButton(onPressed: (){
+                                    provider.searchclick();
+                                  }, icon: Icon(Icons.search)),
+                                )
+                              ],
                             ),
-                          ],
+                          ),
                         ),
 
                         SliverToBoxAdapter(
                           child: Column(
                             children: [
                               const SizedBox(height: 8),
-                              Padding(
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 280),
+                                curve: Curves.easeInOut,
+                                height: provider.showsearch ? 56 : 0, // adjust height based on your search bar
                                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                                child: HomeSearchBar(
-                                  query: provider.searchQuery,
-                                  onChanged: provider.onSearchChanged,
-                                  onClear: provider.clearSearch,
+                                child: AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 250),
+                                  opacity: provider.showsearch ? 1.0 : 0.0,
+                                  child: HomeSearchBar(
+                                    query: provider.searchQuery,
+                                    onChanged: provider.onSearchChanged,
+                                    onClear: provider.clearSearch,
+                                  ),
                                 ),
                               ),
 
+                              const SizedBox(height: 10,),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                  elevation: 2,
+                                  shadowColor: Colors.black.withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  child: Stack(
+                                    children: [
+                                      // Image
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Image.asset(
+                                          "assets/images/Explore_poster.png",
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          height: 250, // Adjust height as needed
+                                        ),
+                                      ),
+
+                                      // Optional subtle overlay for better aesthetics
+                                      Positioned.fill(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.transparent,
+                                                Colors.black.withOpacity(0.15),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+
+
                               Container(
-                                color: DC.bg0,
+                                color: DC.bg1,
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 child: FilterChipsRow(
                                   active: provider.activeFilter,
@@ -158,7 +224,7 @@ class _ExplorescreenState extends State<Explorescreen>
                                 child: Row(
                                   children: [
                                     Text(
-                                      "${provider.filteredUsers.length} Developers",
+                                      "Developers for you",
                                       style: const TextStyle(
                                         fontSize: 17,
                                         fontWeight: FontWeight.bold,
@@ -193,6 +259,7 @@ class _ExplorescreenState extends State<Explorescreen>
                                     return Padding(
                                       padding: const EdgeInsets.all(0),
                                       child: ExploreCard(
+                                        id: user.id,
                                         name: user.name,
                                         role: user.role,
                                         location: user.location,
@@ -235,15 +302,15 @@ class _ExplorescreenState extends State<Explorescreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: DC.p.withOpacity(0.1),
+        color: DC.bg0.withOpacity(0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: const Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.verified_rounded, size: 16, color: DC.p),
+          Icon(Icons.verified_rounded, size: 16, color: Colors.green),
           SizedBox(width: 4),
-          Text("Available Now", style: TextStyle(color: DC.p, fontWeight: FontWeight.bold, fontSize: 13)),
+          Text("Available Now", style: TextStyle(color: DC.textPrimary, fontWeight: FontWeight.bold, fontSize: 13)),
         ],
       ),
     );

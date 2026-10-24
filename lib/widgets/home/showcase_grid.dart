@@ -191,7 +191,7 @@ class _ShowcaseCardState extends State<_ShowcaseCard>
                         if (post.isTrending)
                           Text(
                             '↑ hot',
-                            style: DCText.micro.copyWith(color: DC.g, fontWeight: FontWeight.w800),
+                            style: DCText.micro.copyWith(color: DC.textPrimary, fontWeight: FontWeight.w800),
                           ),
                       ],
                     ),
@@ -418,9 +418,9 @@ class _EmptyShowcase extends StatelessWidget {
       padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          Icon(Icons.grid_view_rounded, size: 40, color: DC.gr),
+          Icon(Icons.grid_view_rounded, size: 40, color: DC.textPrimary),
           const SizedBox(height: 12),
-          Text('No posts yet', style: DCText.h3.copyWith(color: DC.gr)),
+          Text('No posts yet', style: DCText.h3.copyWith(color: DC.textPrimary)),
           const SizedBox(height: 6),
           Text('Be the first to showcase your work!',
               style: DCText.caption, textAlign: TextAlign.center),

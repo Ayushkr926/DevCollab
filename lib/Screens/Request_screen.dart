@@ -31,7 +31,6 @@ class _RequestScreenState extends State<RequestScreen> {
   int _navIndex = 2;
   bool _searchOpen = false;
 
-  // Local, UI-only bookkeeping for exit animations. Does not touch business logic.
   final Map<String, bool> _exiting = {}; // id -> isAccept
   final Set<String> _dismissed = {};
 
@@ -116,19 +115,19 @@ class _RequestScreenState extends State<RequestScreen> {
                       onChanged: provider.switchTab,
                     ),
                   ),
-                  // if (_searchOpen)
-                  //   SliverToBoxAdapter(
-                  //     child: RequestSearchBar(
-                  //       controller: _searchCtrl,
-                  //       accent: accent,
-                  //       onChanged: provider.setSearchQuery,
-                  //       onClose: () {
-                  //         setState(() => _searchOpen = false);
-                  //         _searchCtrl.clear();
-                  //         provider.setSearchQuery('');
-                  //       },
-                  //     ),
-                  //   ),
+                  if (_searchOpen)
+                    SliverToBoxAdapter(
+                      child: RequestSearchBar(
+                        controller: _searchCtrl,
+                        accent: accent,
+                        onChanged: provider.setSearchQuery,
+                        onClose: () {
+                          setState(() => _searchOpen = false);
+                          _searchCtrl.clear();
+                          provider.setSearchQuery('');
+                        },
+                      ),
+                    ),
                   // if (isReceivedTab)
                   //   SliverToBoxAdapter(
                   //     child: StatsHeader(

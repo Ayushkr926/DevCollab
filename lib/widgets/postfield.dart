@@ -55,9 +55,9 @@ class _PpFieldState extends State<PpField> {
   }
 
   Color get _borderColor {
-    if (widget.errorText != null) return DC.r;
-    if (_focused) return DC.p;
-    if (widget.controller.text.isNotEmpty) return DC.g;
+    if (widget.errorText != null) return DC.textSecondary;
+    if (_focused) return DC.bg0;
+    if (widget.controller.text.isNotEmpty) return DC.textSecondary;
     return DC.border;
   }
 
@@ -76,22 +76,22 @@ class _PpFieldState extends State<PpField> {
                 Container(
                   width: 4, height: 4,
                   margin: const EdgeInsets.only(right: 6),
-                  decoration: const BoxDecoration(color: DC.r, shape: BoxShape.circle),
+                  decoration: const BoxDecoration(color: DC.textSecondary, shape: BoxShape.circle),
                 ),
               Text(
                 widget.label.toUpperCase(),
                 style: DCText.label.copyWith(
                   color: widget.errorText != null
-                      ? DC.r
-                      : _focused ? DC.p : DC.textSecondary,
+                      ? DC.textSecondary
+                      : _focused ? DC.bg0 : DC.textSecondary,
                 ),
               ),
               if (!widget.required) ...[
                 const SizedBox(width: 6),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                  decoration: BoxDecoration(color: DC.a2, borderRadius: BorderRadius.circular(4)),
-                  child: Text('optional', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: DC.a3)),
+                  decoration: BoxDecoration(color: DC.textSecondary, borderRadius: BorderRadius.circular(4)),
+                  child: Text('optional', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: DC.textPrimary)),
                 ),
               ],
             ],
@@ -102,7 +102,7 @@ class _PpFieldState extends State<PpField> {
             decoration: BoxDecoration(
               color: widget.errorText != null
                   ? const Color(0xFFFCEBEB)
-                  : _focused ? DC.p3.withOpacity(.3) : Colors.white,
+                  : _focused ? DC.bg0.withOpacity(.3) : Colors.white,
               borderRadius: BorderRadius.circular(13),
               border: Border.all(color: _borderColor, width: _focused ? 1.4 : .5),
             ),
@@ -116,7 +116,7 @@ class _PpFieldState extends State<PpField> {
               style: DCText.body.copyWith(fontSize: 13),
               decoration: InputDecoration(
                 hintText: widget.hint,
-                hintStyle: const TextStyle(fontSize: 13, color: DC.textTertiary, fontWeight: FontWeight.w400),
+                hintStyle: const TextStyle(fontSize: 13, color: DC.textSecondary, fontWeight: FontWeight.w400),
                 border: InputBorder.none,
                 counterText: '',
                 contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -124,14 +124,14 @@ class _PpFieldState extends State<PpField> {
                     ? Padding(
                   padding: const EdgeInsets.only(left: 12, right: 6),
                   child: Icon(widget.prefixIcon, size: 16,
-                      color: _focused ? DC.p : DC.textTertiary),
+                      color: _focused ? DC.bg0 : DC.textSecondary),
                 )
                     : null,
                 prefixIconConstraints: const BoxConstraints(minWidth: 38),
                 suffixIcon: widget.controller.text.isNotEmpty && widget.errorText == null && widget.maxLines == 1
                     ? const Padding(
                   padding: EdgeInsets.only(right: 12),
-                  child: Icon(Icons.check_circle_rounded, size: 16, color: DC.g),
+                  child: Icon(Icons.check_circle_rounded, size: 16, color: DC.textPrimary),
                 )
                     : null,
               ),
@@ -143,9 +143,9 @@ class _PpFieldState extends State<PpField> {
               if (widget.errorText != null)
                 Row(
                   children: [
-                    const Icon(Icons.cancel_rounded, size: 11, color: DC.r),
+                    const Icon(Icons.cancel_rounded, size: 11, color: DC.textSecondary),
                     const SizedBox(width: 4),
-                    Text(widget.errorText!, style: const TextStyle(fontSize: 10, color: DC.r, fontWeight: FontWeight.w600)),
+                    Text(widget.errorText!, style: const TextStyle(fontSize: 10, color: DC.textSecondary, fontWeight: FontWeight.w600)),
                   ],
                 )
               else
@@ -181,18 +181,18 @@ class PpSectionLabel extends StatelessWidget {
         children: [
           if (required)
             Container(width: 4, height: 4, margin: const EdgeInsets.only(right: 6),
-                decoration: const BoxDecoration(color: DC.r, shape: BoxShape.circle)),
+                decoration: const BoxDecoration(color: DC.textSecondary, shape: BoxShape.circle)),
           Text(title.toUpperCase(), style: DCText.label.copyWith(
-              color: errorText != null ? DC.r : DC.textSecondary)),
+              color: errorText != null ? DC.textSecondary : DC.textSecondary)),
           if (!required) ...[
             const SizedBox(width: 6),
             Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                decoration: BoxDecoration(color: DC.a2, borderRadius: BorderRadius.circular(4)),
-                child: Text('optional', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: DC.a3))),
+                decoration: BoxDecoration(color: DC.textSecondary, borderRadius: BorderRadius.circular(4)),
+                child: Text('optional', style: TextStyle(fontSize: 8, fontWeight: FontWeight.w700, color: DC.textSecondary))),
           ],
           if (errorText != null) ...[
             const Spacer(),
-            Text(errorText!, style: const TextStyle(fontSize: 10, color: DC.r, fontWeight: FontWeight.w600)),
+            Text(errorText!, style: const TextStyle(fontSize: 10, color: DC.textSecondary, fontWeight: FontWeight.w600)),
           ],
         ],
       ),
@@ -242,9 +242,9 @@ class _PpChipState extends State<PpChip> with SingleTickerProviderStateMixin {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
           decoration: BoxDecoration(
-            color: widget.selected ? DC.p : Colors.white,
+            color: widget.selected ? DC.bg0 : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: widget.selected ? DC.p : DC.border, width: widget.selected ? 0 : .5),
+            border: Border.all(color: widget.selected ? DC.bg0 : DC.border, width: widget.selected ? 0 : .5),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -300,7 +300,7 @@ class PpSegment extends StatelessWidget {
                 ),
                 child: Text(opt, textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700,
-                        color: isSel ? DC.p : DC.textSecondary)),
+                        color: isSel ? DC.bg0 : DC.textSecondary)),
               ),
             ),
           );
@@ -337,7 +337,7 @@ class PpRoleRow extends StatelessWidget {
           children: [
             Container(
               width: 7, height: 7,
-              decoration: const BoxDecoration(color: DC.p, shape: BoxShape.circle),
+              decoration: const BoxDecoration(color: DC.bg0, shape: BoxShape.circle),
             ),
             const SizedBox(width: 9),
             Expanded(
@@ -348,7 +348,7 @@ class PpRoleRow extends StatelessWidget {
               child: Container(
                 width: 22, height: 22,
                 decoration: BoxDecoration(color: const Color(0xFFFCEBEB), borderRadius: BorderRadius.circular(6)),
-                child: const Icon(Icons.close_rounded, size: 13, color: DC.r),
+                child: const Icon(Icons.close_rounded, size: 13, color: DC.textSecondary),
               ),
             ),
           ],
@@ -383,7 +383,7 @@ class PpRoleInput extends StatelessWidget {
               style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
               decoration: const InputDecoration(
                 hintText: 'e.g. Flutter developer',
-                hintStyle: TextStyle(fontSize: 12, color: DC.textTertiary, fontWeight: FontWeight.w400),
+                hintStyle: TextStyle(fontSize: 12, color: DC.textSecondary, fontWeight: FontWeight.w400),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(horizontal: 13, vertical: 11),
               ),
@@ -395,7 +395,7 @@ class PpRoleInput extends StatelessWidget {
           onTap: onAdd,
           child: Container(
             width: 38, height: 38,
-            decoration: BoxDecoration(color: DC.p, borderRadius: BorderRadius.circular(11)),
+            decoration: BoxDecoration(color: DC.bg0, borderRadius: BorderRadius.circular(11)),
             child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
           ),
         ),
@@ -434,7 +434,7 @@ class PpStepHeader extends StatelessWidget {
                       duration: const Duration(milliseconds: 220),
                       height: 4,
                       decoration: BoxDecoration(
-                        color: isDone || isActive ? DC.p : DC.bg2,
+                        color: isDone || isActive ? DC.bg0 : DC.bg2,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),
@@ -453,7 +453,7 @@ class PpStepHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: isActive ? FontWeight.w800 : FontWeight.w500,
-                  color: isActive ? DC.p : DC.textTertiary,
+                  color: isActive ? DC.bg0 : DC.textSecondary,
                 ),
               );
             }),
@@ -473,7 +473,7 @@ class PpCompletionBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: DC.p3,
+        color: DC.bg0,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0xFFAFA9EC), width: .5),
       ),
@@ -494,16 +494,16 @@ class PpCompletionBadge extends StatelessWidget {
                       value: v,
                       strokeWidth: 2.5,
                       backgroundColor: const Color(0xFFD8D4F5),
-                      valueColor: const AlwaysStoppedAnimation(DC.p),
+                      valueColor: const AlwaysStoppedAnimation(DC.bg0),
                     ),
                   ),
                 ),
-                Text('$percent', style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: DC.p)),
+                Text('$percent', style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: DC.bg0)),
               ],
             ),
           ),
           const SizedBox(width: 7),
-          Text('Draft complete', style: DCText.micro.copyWith(color: DC.p, fontWeight: FontWeight.w700)),
+          Text('Draft complete', style: DCText.micro.copyWith(color: DC.bg0, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -558,7 +558,7 @@ class PpBottomBar extends StatelessWidget {
               onTap: isLoading ? null : onPrimary,
               child: Container(
                 height: 48,
-                decoration: BoxDecoration(color: DC.p, borderRadius: BorderRadius.circular(13)),
+                decoration: BoxDecoration(color: DC.bg0, borderRadius: BorderRadius.circular(13)),
                 child: Center(
                   child: isLoading
                       ? const SizedBox(

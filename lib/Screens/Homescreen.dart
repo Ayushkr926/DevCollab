@@ -391,7 +391,7 @@ class _HomeScreenState extends State<HomeScreen>
                   end: Offset.zero,
                 ).animate(_entryCtrl),
                 child: RefreshIndicator(
-                  color: DC.p,
+                  color: DC.bg0,
                   onRefresh: provider.refresh,
                   child: CustomScrollView(
                     controller: _scrollCtrl,
@@ -857,7 +857,7 @@ class _LoadMoreIndicator extends StatelessWidget {
             height: 22,
             child: CircularProgressIndicator(
               strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(DC.p),
+              valueColor: AlwaysStoppedAnimation<Color>(DC.bg0),
             ),
           ),
         ),
@@ -869,7 +869,7 @@ class _LoadMoreIndicator extends StatelessWidget {
         child: Center(
           child: Text(
             '— You\'ve seen everything —',
-            style: DCText.micro.copyWith(color: DC.gr),
+            style: DCText.micro.copyWith(color: DC.textPrimary),
           ),
         ),
       );
@@ -996,8 +996,8 @@ class PostBottomSheet extends StatelessWidget {
           ),
           _SheetItem(
             icon: Icons.grid_view_rounded,
-            iconColor: DC.p,
-            iconBg: DC.p3,
+            iconColor: DC.bg0,
+            iconBg: DC.bg0,
             title: 'Showcase work',
             subtitle: 'Share a project, UI, or code snippet',
             onTap: () {
@@ -1007,8 +1007,8 @@ class PostBottomSheet extends StatelessWidget {
           ),
           _SheetItem(
             icon: Icons.work_outline_rounded,
-            iconColor: DC.p,
-            iconBg: DC.p,
+            iconColor: DC.bg0,
+            iconBg: DC.bg0,
             title: 'Post a project',
             subtitle: 'Find teammates for your next build',
             onTap: () {
@@ -1018,8 +1018,8 @@ class PostBottomSheet extends StatelessWidget {
           ),
           _SheetItem(
             icon: Icons.bolt_rounded,
-            iconColor: DC.a,
-            iconBg: DC.a2,
+            iconColor: DC.onPrimary,
+            iconBg: DC.onPrimary,
             title: 'Share a hackathon',
             subtitle: 'Let the community know about it',
             onTap: () {
@@ -1076,7 +1076,7 @@ class _SheetItem extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: DC.gr, size: 20),
+            const Icon(Icons.chevron_right_rounded, color: DC.textSecondary, size: 20),
           ],
         ),
       ),

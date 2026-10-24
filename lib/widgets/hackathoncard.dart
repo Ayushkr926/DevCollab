@@ -138,7 +138,7 @@ class Hackcard extends StatelessWidget {
                     ),
                     child: Icon(
                       hackathon.bookmarked ? Icons.bookmark : Icons.bookmark_border,
-                      color: hackathon.bookmarked ? DC.p : Colors.grey[700],
+                      color: hackathon.bookmarked ? DC.bg0 : Colors.grey[700],
                       size: 22,
                     ),
                   ),
@@ -253,7 +253,7 @@ class Hackcard extends StatelessWidget {
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
-                          side: BorderSide(color: DC.p),
+                          side: BorderSide(color: DC.bg0),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text("View Details"),
@@ -264,7 +264,7 @@ class Hackcard extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: hackathon.registrationOpen ? onRegister : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: DC.p,
+                          backgroundColor: DC.bg0,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

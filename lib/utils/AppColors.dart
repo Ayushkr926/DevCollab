@@ -1,83 +1,82 @@
 import 'package:flutter/material.dart';
 
 /// ─────────────────────────────────────────────────────────────────────────────
-/// DevCollab Palette — Uxintace Rose Collection
-///
-/// Raw swatches (palette order, light → dark):
-///   peach      #FFBB94
-///   blush      #FB9590
-///   rose       #DC586D
-///   berry      #A33757  ← primary brand
-///   burgundy   #852E4E
-///   plum       #4C1D3D
+/// DevCollab Palette — Monochrome (White & Black)
 /// ─────────────────────────────────────────────────────────────────────────────
 class AppColors {
   AppColors._();
 
-  // ── Raw palette swatches ──────────────────────────────────────────────────
-  static const Color peach    = Color(0xFFFFBB94);
-  static const Color blush    = Color(0xFFFB9590);
-  static const Color rose     = Color(0xFFDC586D);
-  static const Color berry    = Color(0xFFA33757); // ← primary brand
-  static const Color burgundy = Color(0xFF852E4E);
-  static const Color plum     = Color(0xFF4C1D3D);
+  // ── Core Monochrome Colors ───────────────────────────────────────────────
+  static const Color black = Colors.black;
+  static const Color white = Colors.white;
 
-  // ── Backward-compat aliases (used in login_screen, splash, etc.) ──────────
-  static const Color primary      = berry;
-  static const Color primaryLight = Color(0xFFFDE8EE);
-  static const Color textDark     = Color(0xFF1F0A12);
-  static const Color textLight    = Color(0xFF7A4057);
-  static const Color error        = rose;
+  static const Color gray900 = Color(0xFF111111); // near-black
+  static const Color gray800 = Color(0xFF1F1F1F);
+  static const Color gray700 = Color(0xFF2C2C2C);
+  static const Color gray600 = Color(0xFF3A3A3C);
+  static const Color gray500 = Color(0xFF6C6C70);
+  static const Color gray400 = Color(0xFF8E8E93);
+  static const Color gray300 = Color(0xFFBEBEBF);
+  static const Color gray200 = Color(0xFFE5E5EA);
+  static const Color gray100 = Color(0xFFF2F2F7);
+  static const Color gray50  = Color(0xFFFAFAFC);
+
+  // ── Backward-compat aliases ───────────────────────────────────────────────
+  static const Color primary      = black;
+  static const Color primaryLight = gray100;
+  static const Color textDark     = black;
+  static const Color textLight    = white;
+  static const Color error        = Color(0xFFFF3B30); // keep red for errors
 
   // ── Light Theme ───────────────────────────────────────────────────────────
   static const AppColorScheme light = AppColorScheme(
     // Brand
-    primary:       berry,
-    primaryLight:  Color(0xFFFDE8EE), // very light rose tint
-    primaryDark:   plum,
+    primary:       black,
+    primaryLight:  gray100,
+    primaryDark:   gray900,
 
-    // Accent tiers
-    accent1: peach,
-    accent2: blush,
-    accent3: rose,
+    // Accent tiers (grays)
+    accent1: gray700,
+    accent2: gray600,
+    accent3: gray500,
 
     // Backgrounds
-    background:    Color(0xFFFFFBFC), // near-white with a blush warmth
-    surface:       Colors.white,
-    surfaceAlt:    Color(0xFFFFF0F3), // cards / chips
-    surfaceMuted:  Color(0xFFFAEBEE), // subtle dividers, tags bg
+    background:    white,
+    surface:       white,
+    surfaceAlt:    gray50,
+    surfaceMuted:  gray100,
 
     // Text
-    textPrimary:   Color(0xFF1F0A12),   // near-black plum
-    textSecondary: Color(0xFF7A4057),   // mid-tone rose
-    textMuted:     Color(0xFFB8809A),   // placeholder / hints
-    textOnPrimary: Colors.white,
+    textPrimary:   black,
+    textSecondary: gray700,
+    textMuted:     gray500,
+    textOnPrimary: white,
 
     // Border
-    border:        Color(0xFFE8C4CF),
-    borderFocus:   berry,
+    border:        gray200,
+    borderFocus:   black,
 
     // Status
     success: Color(0xFF1D9E75),
     warning: Color(0xFFEF9F27),
-    error:   Color(0xFFDC586D), // rose-red
+    error:   Color(0xFFFF3B30),
     info:    Color(0xFF5B6EF6),
 
     // Status surfaces
     successSurface: Color(0xFFE1F5EE),
     warningSurface: Color(0xFFFAEEDA),
-    errorSurface:   Color(0xFFFDE8EE),
+    errorSurface:   Color(0xFFFFE5E5),
     infoSurface:    Color(0xFFEEEDFE),
 
-    // Gradient stops for hero areas
-    gradientStart: Color(0xFFFFBB94),
-    gradientEnd:   Color(0xFFA33757),
+    // Gradient stops (black to dark gray)
+    gradientStart: gray900,
+    gradientEnd:   black,
 
     // Nav bar
-    navBar:         Colors.white,
-    navBarBorder:   Color(0xFFE8C4CF),
-    navItemActive:  berry,
-    navItemInactive: Color(0xFFB8809A),
+    navBar:         white,
+    navBarBorder:   gray200,
+    navItemActive:  black,
+    navItemInactive: gray500,
 
     isDark: false,
   );
@@ -85,30 +84,30 @@ class AppColors {
   // ── Dark Theme ────────────────────────────────────────────────────────────
   static const AppColorScheme dark = AppColorScheme(
     // Brand
-    primary:       Color(0xFFDC586D), // rose is the primary in dark (pops nicely)
-    primaryLight:  Color(0xFF5A1B2F), // dark tinted bg for chips/badges
-    primaryDark:   peach,             // peach as highlight on dark
+    primary:       white,
+    primaryLight:  gray800,
+    primaryDark:   white,
 
     // Accent tiers
-    accent1: Color(0xFF4C1D3D),  // plum
-    accent2: Color(0xFF852E4E),  // burgundy
-    accent3: Color(0xFFA33757),  // berry
+    accent1: gray400,
+    accent2: gray500,
+    accent3: gray600,
 
     // Backgrounds
-    background:   Color(0xFF1A0A10),  // very dark plum-black
-    surface:      Color(0xFF2B1220),  // dark surface cards
-    surfaceAlt:   Color(0xFF3C1B2A),  // elevated surfaces
-    surfaceMuted: Color(0xFF4C253A),  // chips / tags
+    background:   gray900,
+    surface:      gray800,
+    surfaceAlt:   gray700,
+    surfaceMuted: gray600,
 
     // Text
-    textPrimary:   Color(0xFFFDE8EE), // near-white rose tint
-    textSecondary: Color(0xFFD4829A), // light rose
-    textMuted:     Color(0xFF8A5468), // muted
-    textOnPrimary: Colors.white,
+    textPrimary:   white,
+    textSecondary: gray300,
+    textMuted:     gray400,
+    textOnPrimary: black,
 
     // Border
-    border:      Color(0xFF5A2A3D),
-    borderFocus: Color(0xFFDC586D),
+    border:      gray600,
+    borderFocus: white,
 
     // Status
     success: Color(0xFF3DD68C),
@@ -122,15 +121,15 @@ class AppColors {
     errorSurface:   Color(0xFF4C1020),
     infoSurface:    Color(0xFF1A1854),
 
-    // Gradient stops for hero areas
-    gradientStart: Color(0xFF4C1D3D),
-    gradientEnd:   Color(0xFF852E4E),
+    // Gradient stops
+    gradientStart: gray900,
+    gradientEnd:   black,
 
     // Nav bar
-    navBar:          Color(0xFF2B1220),
-    navBarBorder:    Color(0xFF5A2A3D),
-    navItemActive:   Color(0xFFDC586D),
-    navItemInactive: Color(0xFF8A5468),
+    navBar:          gray800,
+    navBarBorder:    gray600,
+    navItemActive:   white,
+    navItemInactive: gray400,
 
     isDark: true,
   );
@@ -219,11 +218,12 @@ class AppColorScheme {
   // Gradient
   final Color gradientStart;
   final Color gradientEnd;
+
   LinearGradient get primaryGradient => LinearGradient(
-        colors: [gradientStart, gradientEnd],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
+    colors: [gradientStart, gradientEnd],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
 
   // Nav bar
   final Color navBar;
@@ -233,16 +233,7 @@ class AppColorScheme {
 
   final bool isDark;
 
-  // ── Avatar palette (maps colorIndex → [bg, text]) ───────────────────────
-  static const List<List<Color>> avatarPalette = [
-    [Color(0xFFFDE8EE), Color(0xFF4C1D3D)], // rose-blush
-    [Color(0xFFFFBB94), Color(0xFF4C1D3D)], // peach
-    [Color(0xFFFB9590), Color(0xFF4C1D3D)], // blush
-    [Color(0xFFE1F5EE), Color(0xFF085041)], // green
-    [Color(0xFFFAEEDA), Color(0xFF633806)], // amber
-    [Color(0xFFEEEDFE), Color(0xFF26215C)], // purple
-  ];
+  // ── Avatar palette (monochrome) ───────────────────────────────────────────
 
-  Color avatarBg(int index)   => avatarPalette[index % avatarPalette.length][0];
-  Color avatarText(int index) => avatarPalette[index % avatarPalette.length][1];
+
 }

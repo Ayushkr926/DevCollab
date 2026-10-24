@@ -180,7 +180,7 @@ class _HackathonDetailScreenState extends State<HackathonDetailScreen> {
                       }
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: DC.p,
+                        backgroundColor: DC.bg0,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
@@ -237,7 +237,7 @@ class _HackathonDetailScreenState extends State<HackathonDetailScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon, color: DC.p),
+            Icon(icon, color: DC.bg0),
             const SizedBox(height: 8),
             Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
             const SizedBox(height: 4),

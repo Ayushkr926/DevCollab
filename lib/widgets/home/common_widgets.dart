@@ -63,7 +63,7 @@ class DcAvatar extends StatelessWidget {
                 width: size * 0.27,
                 height: size * 0.27,
                 decoration: BoxDecoration(
-                  color: DC.g,
+                  color: DC.bg1,
                   shape: BoxShape.circle,
                   border: Border.all(color: c.surface, width: 1.5),
                 ),
@@ -86,14 +86,14 @@ class DcBadge extends StatelessWidget {
   const DcBadge({
     super.key,
     required this.label,
-    this.bg = DC.p3,
-    this.textColor = DC.p4,
+    this.bg = DC.bg0,
+    this.textColor = DC.textPrimary,
   });
 
-  factory DcBadge.open()      => const DcBadge(label: 'Open',     bg: DC.g2, textColor: DC.g3);
-  factory DcBadge.hackathon() => const DcBadge(label: 'Hackathon',bg: DC.p3, textColor: DC.p4);
-  factory DcBadge.freelance() => const DcBadge(label: 'Freelance',bg: DC.a2, textColor: DC.a3);
-  factory DcBadge.personal()  => const DcBadge(label: 'Personal', bg: DC.g2, textColor: DC.g3);
+  factory DcBadge.open()      => const DcBadge(label: 'Open',     bg: DC.bg0, textColor: DC.textPrimary);
+  factory DcBadge.hackathon() => const DcBadge(label: 'Hackathon',bg: DC.bg1, textColor: DC.textPrimary);
+  factory DcBadge.freelance() => const DcBadge(label: 'Freelance',bg: DC.bg1, textColor: DC.textPrimary);
+  factory DcBadge.personal()  => const DcBadge(label: 'Personal', bg: DC.bg2, textColor: DC.textPrimary);
 
   @override
   Widget build(BuildContext context) {

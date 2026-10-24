@@ -156,7 +156,7 @@ class _AllChatsScreenState extends State<AllChatsScreen> {
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: DC.p,
+                color: DC.bg0,
                 shape: BoxShape.circle,
               ),
               child: Text(
